@@ -1,0 +1,40 @@
+{
+  "name": "The C² Method",
+  "slug": "c2method",
+  "description": "The free, open-source AI-native build method. C² turns AI coding agents into genuine development partners — a method, templates, and a starter you drop into any project. Context × Code, multiplied by AI.",
+  "category": "method",
+  "framework": null,
+  "tags": [
+    "methodology",
+    "c-squared",
+    "ai-native",
+    "contextbase",
+    "claude-code",
+    "cursor",
+    "prompt-brief",
+    "session-brief",
+    "open-source",
+    "agent-agnostic"
+  ],
+  "is_featured": true,
+  "difficulty": "beginner",
+  "estimated_time": "Half a day to set up",
+  "commander_tools": [],
+  "app_type": "ex",
+  "what_you_build": "An AI build practice: a contextbase that lives in git, a .md Router your agent reads first, and the session-brief discipline that makes your AI agent smarter every session.",
+  "starter_prompt": "I want to adopt the C² Method on my project. Read the C² methodology and quick-start, then walk me through setting up the folder structure, the .md Router (CLAUDE.md / AGENTS.md), and my first Prompt Brief and Session Brief.",
+  "seo_title": "The C² Method — Open-Source AI-Native Build Method | Waymaker",
+  "seo_description": "C² is a free, open-source build method that turns AI coding agents into genuine development partners. Context × Code, multiplied by AI. Templates and a starter you can use today.",
+  "seo_keywords": [
+    "C2 method",
+    "AI-native development methodology",
+    "AI coding agent method",
+    "contextbase",
+    "Claude Code methodology",
+    "open source build method"
+  ],
+  "topics": [
+    "engineering",
+    "ai"
+  ]
+}
