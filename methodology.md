@@ -3,9 +3,9 @@
 
 > **P = aic²**
 >
-> Productivity equals AI multiplied by Context squared.
+> Productivity comes from AI applied to your two systems — Context and Code.
 >
-> The insight isn't that AI makes developers faster. It's that *context and code together* make AI exponentially more effective — and both compound. C² = Context × Code. The exponent isn't marketing. It's the mechanism.
+> The insight isn't that AI makes developers faster. It's that *context and code together* make AI far more effective — and both compound. The "²" is the **two Cs** — Context × Code — not a literal exponent. It's a mnemonic: the two systems multiply each other and compound across sessions.
 
 ---
 
@@ -35,9 +35,9 @@ This is not a documentation culture. It is an **execution infrastructure**.
 
 The name C² is literal: **two Cs**. Context and Code. Every software project runs on both systems simultaneously — the codebase (what executes) and the contextbase (what guides execution). Traditional methodologies optimise only the codebase. C² optimises both, and treats their relationship as multiplicative: if either is zero, productivity collapses regardless of AI capability. A brilliant AI with no contextbase is improvising. A rich contextbase with no working code is documentation. You need both, and the value of each amplifies the other.
 
-**The multiplication works in both directions.** A richer contextbase — more gotchas captured, better PRDs, sharper session briefs — makes AI-generated code more precise and less likely to repeat past mistakes. Better code — cleaner architecture, more consistent patterns — surfaces insights that enrich the contextbase. Context improves Code; Code improves Context. That's the compounding loop the exponent captures.
+**The multiplication works in both directions.** A richer contextbase — more gotchas captured, better PRDs, sharper session briefs — makes AI-generated code more precise and less likely to repeat past mistakes. Better code — cleaner architecture, more consistent patterns — surfaces insights that enrich the contextbase. Context improves Code; Code improves Context. That's the compounding loop at the heart of C².
 
-**Both variables are live levers — not constants.** In Einstein's equation, c (speed of light) is fixed. In P=aic², all three variables improve over time: a better AI model grows `ai`; more sessions and richer documentation grow both Cs. A 2× improvement in AI capability and a 2× improvement in both Context and Code produces 8× productivity (2 × 2² = 8). The methodology is a structural bet that all three will keep improving — and the direction of AI development makes that a good bet.
+**All three are live levers — not constants.** Every variable improves over time: a better AI model grows `ai`; more sessions and richer documentation grow both Cs. Stack a 2× gain in AI capability, Context, and Code and they multiply — 2 × 2 × 2 = 8× productivity. The methodology is a structural bet that all three will keep improving — and the direction of AI development makes that a good bet.
 
 **What a model release looks like in C² terms:** When a new AI model ships, every project running C² immediately benefits — the contextbase doesn't need to be rebuilt, the templates don't change, the folder structure stays intact. A richer `ai` is now reading the same `c²`. The compounding already done multiplies by a larger number overnight. This is the equation working as designed: the methodology investment is model-agnostic and accrues value every time the AI improves.
 
@@ -75,8 +75,10 @@ Five principles. Pilot in command.
 AI-augmented teams create faster than they complete — speed without command becomes drift. Five principles keep you the pilot, not a passenger:
 
 **A · Fly the plane — own it.** One human owns each PRD from intent to a verified outcome — accountable for the landing, not just the takeoff. Keep the cockpit small: you can only truly fly a few at once. Done means the result moved, not that code shipped.
+> **Guardrails:** a **WIP cap** — max 5 concurrent in-progress PRDs; anything above goes to backlog. (A team with 20 in-progress PRDs has 15 aspirations and 5 active projects — the cap makes that distinction impossible to ignore.) Enforced by a **monthly 30-minute review**: walk every in-progress PRD, update `completion_rationale` and `last_reviewed`, force-move stale ones to backlog.
 
 **B · No takeoff without a flight plan — brief it, trim it.** A PRD becomes active work only as a Prompt Brief the agent can fly — and the brief cuts the mission to what matters, in small legs you can turn back from in minutes. No brief, no flight.
+> **Guardrail:** **brief-before-active** — a PRD needs ≥1 Prompt Brief before it moves to in-progress. If you can't write a single execution brief, it's a thinking document, not active work.
 
 **C · Build the autopilot — systematize it.** Never do the work twice. Don't write the blog — embed the system that runs it. Don't work the pipeline by hand — build the agent that runs it. Ship the machine that produces the output, not the output.
 
@@ -195,18 +197,6 @@ Some tasks are high-value and highly repeatable: QA review, release note authori
 Running multiple agents simultaneously on the same problem — regardless of which agents — burns cost, produces contradictory outputs, creates worktree conflicts, and makes session briefs impossible to write coherently. The pattern to avoid: two agents both modifying the same files in the same session. The pattern to use: one agent executes, one agent reviews, and they never work concurrently on the same surface.
 
 The anti-pattern most often emerges from urgency. A blocked session, a tight deadline, a complex bug — and the impulse is to throw more agents at it. That impulse is wrong. Clarify the brief, surface the blocker, and let one agent proceed. Multi-agent is a *sequential* practice (lead executes → bench reviews → lead acts on review), not a parallel one.
-
----
-
-## Anti-Pattern Catchers
-
-Three structural mechanics operationalize the principles and combat "create-not-finish drift" — the tendency of AI-augmented teams to create faster than they complete:
-
-**The WIP cap — max 5 concurrent in-progress PRDs.** Anything above goes to backlog. Forces completion before starting. A team with 20 in-progress PRDs has 15 aspirations and 5 active projects. The cap makes that distinction impossible to ignore. (This is *Fly the plane* made concrete — keep the cockpit small.)
-
-**Brief-before-active — a PRD must have ≥1 Prompt Brief before moving to in-progress.** If you can't write a single execution brief, it's a thinking document, not active work. This prevents the backlog from filling with half-formed ideas labelled as active. (This is *No takeoff without a flight plan*.)
-
-**The monthly review — a 30-minute PRD walk.** Walk every in-progress PRD, update `completion_rationale` and `last_reviewed`. Force-move stale ones to backlog. Thirty minutes once a month eliminates the category of "things we're nominally working on but haven't touched in 90 days."
 
 ---
 

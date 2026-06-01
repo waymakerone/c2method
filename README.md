@@ -37,8 +37,8 @@ Every project runs two parallel systems: a **codebase** (what runs) and a
 **contextbase** (what guides — briefs, patterns, gotchas, decisions, committed to
 git and read by the AI before it acts). C² treats them as multiplicative. Invest
 in context and every session compounds. It's a mnemonic, not a law of physics —
-but the exponent is the point: context compounds, and a better model multiplies
-whatever you've already built.
+but the point holds: the two Cs multiply each other, context compounds across
+sessions, and a better model multiplies whatever you've already built.
 
 ---
 
@@ -102,7 +102,7 @@ not a cage. Learn how each folder works at [c2method.ai/docs](https://c2method.a
 
 ## The promise
 
-You don't need to be a senior developer to build like one. What you need:
+Whether you're a senior developer or just starting out, C² raises the bar and the speed for both — better work than the old agile way, and a junior compounds toward senior judgment as the contextbase grows. It's additive to skill, not a substitute for it. What you need:
 
 - An AI coding agent (Claude Code, Cursor, or similar)
 - A project you're actually building
