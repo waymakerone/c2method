@@ -100,7 +100,7 @@ Obligations from this session not yet closed. These move to the next session bri
 
 ## Test debt
 
-Tests that were deferred in this session, with the reason. These are tracked for the monthly Rule C review.
+Tests that were deferred in this session, with the reason. These are tracked for the monthly PRD review.
 
 - [Test description] — deferred because: [specific reason]
 

@@ -32,7 +32,7 @@ tags: [adopt, audit, migrate, onboarding]
 - **The Cascade** — Platform & Feature PRDs? Prompt Briefs (with scope exclusions + testable acceptance criteria)? Session Briefs (one per session)?
 - **Knowledge capture** — is `03-knowledge/` populated and growing? are discoveries committed in the same session that found them?
 - **Execution quality** — a brief quality gate? tests for new files / a CI gate?
-- **Governance** — a monthly PRD review (Rule C)? a WIP cap (≤5 in-progress PRDs, Rule A)? estimation fields?
+- **Governance** — a monthly PRD review? a WIP cap (≤5 in-progress PRDs)? estimation fields?
 
 ---
 
@@ -49,8 +49,8 @@ tags: [adopt, audit, migrate, onboarding]
 **Layer 2 — The Cascade (max 16)**
 - Feature PRDs exist for active features (not just a platform PRD)
 - PRDs are living documents (recent `updated` dates, not just `created`)
-- ≤ 5 PRDs in `in-progress` at once (Rule A)
-- No `in-progress` PRD without ≥ 1 Prompt Brief (Rule B)
+- ≤ 5 PRDs in `in-progress` at once (the WIP cap)
+- No `in-progress` PRD without ≥ 1 Prompt Brief (brief-before-active)
 - Prompt Briefs exist for in-flight work (not bare tickets)
 - Briefs state explicit scope exclusions (what is NOT being built)
 - Briefs have testable acceptance criteria
@@ -75,7 +75,7 @@ tags: [adopt, audit, migrate, onboarding]
 - Coverage is enforced mechanically (CI gate), not by culture alone
 
 **Layer 5 — Metrics & governance (max 8)**
-- A monthly PRD review runs (Rule C), logged
+- A monthly PRD review runs, logged
 - Stale in-progress PRDs get moved to backlog at review time
 - Prompt Brief frontmatter has `estimated_hours` / `actual_hours`, populated
 - Estimation accuracy is read and used (script / dashboard / review)

@@ -17,8 +17,8 @@ tags: [prd]
 # PRD — [Feature Name]
 
 > **Status:** `backlog` → `in-progress` → `review` → `done`  
-> **Rule B:** This PRD cannot move to `in-progress` without at least one Prompt Brief in `docs/02-working/prompt-briefs/`.  
-> **Rule A:** Check that fewer than 5 PRDs are in `in-progress` before moving this one.
+> **Brief-before-active:** This PRD cannot move to `in-progress` without at least one Prompt Brief in `docs/02-working/prompt-briefs/`.  
+> **WIP cap:** Check that fewer than 5 PRDs are in `in-progress` before moving this one.
 
 ---
 

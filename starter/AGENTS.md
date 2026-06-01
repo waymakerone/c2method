@@ -37,7 +37,7 @@ Repo layout: `apps/` = runnable code · `docs/` = contextbase
 - [ ] [[docs/01-planning/prds/in-progress/FEATURE-NAME]] — [one-line description, current status]
 - [ ] [[docs/01-planning/prds/in-progress/FEATURE-NAME]] — [one-line description, current status]
 
-**WIP cap:** Maximum 5 PRDs in `in-progress/` at once (C² Rule A). Count before adding new ones.
+**WIP cap:** Maximum 5 PRDs in `in-progress/` at once. Count before adding new ones.
 
 ---
 

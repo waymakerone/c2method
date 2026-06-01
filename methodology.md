@@ -68,6 +68,24 @@ The crewman measures output in lines written. The pilot measures output in decis
 
 ---
 
+## The Principles
+
+Five principles. Pilot in command.
+
+AI-augmented teams create faster than they complete — speed without command becomes drift. Five principles keep you the pilot, not a passenger:
+
+**A · Fly the plane — own it.** One human owns each PRD from intent to a verified outcome — accountable for the landing, not just the takeoff. Keep the cockpit small: you can only truly fly a few at once. Done means the result moved, not that code shipped.
+
+**B · No takeoff without a flight plan — brief it, trim it.** A PRD becomes active work only as a Prompt Brief the agent can fly — and the brief cuts the mission to what matters, in small legs you can turn back from in minutes. No brief, no flight.
+
+**C · Build the autopilot — systematize it.** Never do the work twice. Don't write the blog — embed the system that runs it. Don't work the pipeline by hand — build the agent that runs it. Ship the machine that produces the output, not the output.
+
+**D · Earn the green light — verify it.** An agent hands you confident, wrong code at machine speed. Its output is a proposal, not product: it ships when the tests pass and a human clears it. Verification before velocity.
+
+**E · Every flight makes the next one better — compound it.** Each delivery updates the contextbase, so the next agent starts from the new baseline — not from scratch. The team gets smarter every loop. That's the c².
+
+---
+
 ## The Cascade — 6 tiers
 
 The fundamental building block of C² execution. Every piece of work flows through this chain:
@@ -182,13 +200,13 @@ The anti-pattern most often emerges from urgency. A blocked session, a tight dea
 
 ## Anti-Pattern Catchers
 
-Three structural rules built into C² to combat "create-not-finish drift" — the tendency of AI-augmented teams to create faster than they complete:
+Three structural mechanics operationalize the principles and combat "create-not-finish drift" — the tendency of AI-augmented teams to create faster than they complete:
 
-**Rule A — Max 5 concurrent in-progress PRDs.** Anything above goes to backlog. Forces completion before starting. A team with 20 in-progress PRDs has 15 aspirations and 5 active projects. The cap makes that distinction impossible to ignore.
+**The WIP cap — max 5 concurrent in-progress PRDs.** Anything above goes to backlog. Forces completion before starting. A team with 20 in-progress PRDs has 15 aspirations and 5 active projects. The cap makes that distinction impossible to ignore. (This is *Fly the plane* made concrete — keep the cockpit small.)
 
-**Rule B — A PRD must have ≥1 Prompt Brief before moving to in-progress.** If you can't write a single execution brief, it's a thinking document, not active work. This prevents the backlog from filling with half-formed ideas labelled as active.
+**Brief-before-active — a PRD must have ≥1 Prompt Brief before moving to in-progress.** If you can't write a single execution brief, it's a thinking document, not active work. This prevents the backlog from filling with half-formed ideas labelled as active. (This is *No takeoff without a flight plan*.)
 
-**Rule C — Monthly 30-minute PRD review.** Walk every in-progress PRD, update `completion_rationale` and `last_reviewed`. Force-move stale ones to backlog. Thirty minutes once a month eliminates the category of "things we're nominally working on but haven't touched in 90 days."
+**The monthly review — a 30-minute PRD walk.** Walk every in-progress PRD, update `completion_rationale` and `last_reviewed`. Force-move stale ones to backlog. Thirty minutes once a month eliminates the category of "things we're nominally working on but haven't touched in 90 days."
 
 ---
 
@@ -201,7 +219,7 @@ The closest pre-AI methodological ancestor is **Shape Up** (Basecamp): C² share
 | Planning unit | Sprint → Story | Pitch → Scope | Inception → Construction → Operations | PRD → PB → Task |
 | Time box | 2-week sprints | 6-week cycles | Phase-gated (hours to weeks) | Weekly (outcome-based, individual PRD ownership) |
 | Estimation | Story points | Appetite (fixed budget) | Not specified | PB phase sizing (≤6 items, ≤45 min each) |
-| Backlog governance | Groomed, always growing | Betting table | Not specified | Active/backlog folders + Rule A cap (max 5) |
+| Backlog governance | Groomed, always growing | Betting table | Not specified | Active/backlog folders + WIP cap (max 5) |
 | Ceremonies | Standup, planning, review, retro | Team-defined | Human approval gates at phase handoffs | Session briefs (async daily) + fortnightly team alignment |
 | Documentation | Jira + Confluence (rots) | Basecamp | `aidlc-docs/` rule files per phase | Repo-native markdown, git-controlled, AI-readable (compounds) |
 | Knowledge management | Tribal / wiki that rots | Tribal | Not specified | `03-knowledge/` in git, agent-written, self-improving |
@@ -316,13 +334,13 @@ C² v1.0 shipped and worked. These are the v1.1 improvements being folded into t
 
 3. **Write the Platform PRD.** What is this product? Who is it for? What does it not do? This is the strategic layer every feature PRD inherits from.
 
-4. **Create a Feature PRD for each feature.** One PRD per feature, in `docs/01-planning/prds/backlog/` until a Prompt Brief exists for it (Rule B). Then move to `in-progress/` (max 5 at once — Rule A).
+4. **Create a Feature PRD for each feature.** One PRD per feature, in `docs/01-planning/prds/backlog/` until a Prompt Brief exists for it (brief-before-active). Then move to `in-progress/` (max 5 at once — the WIP cap).
 
 5. **Write Prompt Briefs, not tickets.** The brief specifies what to read, what to build, what not to build, and what done looks like. For autonomous execution: include exact file paths and line ranges in pre-flight. For interactive: verify the 6-item gate before starting.
 
 6. **Write a Session Brief whenever context breaks.** Session briefs are AI memory — not an end-of-day ritual. Write one any time the AI context is about to reset: a phone call, a meeting, a break, closing the laptop, hitting the context limit, or ending for the night. If the session produced a Key Discovery, the `03-knowledge/` file is committed in the same session. If it introduced an operational change, the documentation obligation is identified and given a due point (commit, PR, or release).
 
-7. **Run the monthly Rule C review.** Thirty minutes. Walk every in-progress PRD. Move stale ones to backlog. The WIP cap enforces itself if you let it.
+7. **Run the monthly review.** Thirty minutes. Walk every in-progress PRD. Move stale ones to backlog. The WIP cap enforces itself if you let it.
 
 ---
 

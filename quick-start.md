@@ -90,7 +90,7 @@ Status: `in-progress` (if already started) or `backlog` (if not).
 
 Set its `status:` to `in-progress` or `backlog` in the frontmatter — status is a field, not a folder.
 
-**Rule A reminder:** Maximum 5 PRDs at `status: in-progress` at any time. If you already have 5, set one back to `backlog` before starting another.
+**WIP cap reminder:** Maximum 5 PRDs at `status: in-progress` at any time. If you already have 5, set one back to `backlog` before starting another.
 
 ---
 
@@ -158,14 +158,14 @@ The next session starts from the Session Brief. The one after that builds on the
 |---|---|---|
 | Starting without a Prompt Brief | No scope, no AC — sessions drift | Write the brief first, 6-item gate before starting |
 | Skipping the session brief | AI context resets next session | Session ends when brief is committed, not before |
-| Writing PRDs but not Prompt Briefs (Rule B) | PRDs in "in-progress" with no execution path | A PRD needs ≥1 PB before moving to in-progress |
-| >5 PRDs in in-progress (Rule A violation) | Create-not-finish drift | Move stale ones to backlog immediately |
+| Writing PRDs but not Prompt Briefs | PRDs in "in-progress" with no execution path | A PRD needs ≥1 PB before moving to in-progress (brief-before-active) |
+| >5 PRDs in in-progress (WIP cap exceeded) | Create-not-finish drift | Move stale ones to backlog immediately |
 | Checking the gotcha box without committing the file | Knowledge evaporates | Key Discovery = knowledge file in the same commit |
 | Updating CLAUDE.md only occasionally | AI starts sessions with stale context | Update CLAUDE.md at end of every session |
 
 ---
 
-## The monthly governance check (Rule C — 30 minutes)
+## The monthly governance check (30 minutes)
 
 Once a month, walk every PRD in `in-progress/`:
 
@@ -174,4 +174,4 @@ Once a month, walk every PRD in `in-progress/`:
 3. Is `completion_percent` honest? Write the `completion_rationale` — if you can't, the PRD isn't in-progress.
 4. Should this be in `backlog/` instead?
 
-Move stale PRDs to backlog. Thirty minutes. The WIP cap enforces itself if you let Rule C run.
+Move stale PRDs to backlog. Thirty minutes. The WIP cap enforces itself if you let the monthly review run.
