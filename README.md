@@ -70,26 +70,33 @@ Full half-day setup: **[c2method.ai/start](https://c2method.ai/start)**
 
 ```
 c2method/
-├── methodology.md     ← the full method
-├── quick-start.md     ← set up C² on a project in half a day
-├── starter/           ← drop this into any project today
-│   └── AGENTS.md       ← the Router (router.md): your AI's entry point
-└── templates/         ← the contextbase artefacts
-    ├── platform-prd.md
-    ├── feature-prd.md
-    ├── prompt-brief-interactive.md
-    ├── prompt-brief-autonomous.md
-    ├── session-brief.md
-    ├── release-note.md
-    ├── knowledge-gotcha.md
-    ├── knowledge-pattern.md
-    ├── knowledge-adr.md
-    ├── agent-team.md
-    ├── agent-role.md
-    └── learn-pass.md    ← the Learn loop: capture & consolidate
+├── methodology.md   ← the full method        quick-start.md   ← half-day setup
+└── starter/         ← copy this into your project (cp -r starter/. your-project/)
+    ├── AGENTS.md                      ← the Router (router.md): your AI reads this first
+    ├── .claude/commands/             ← learn.md, audit.md (agent commands)
+    └── docs/
+        ├── 01-planning/product-requirements/   platform-prd.md · feature-prd.md
+        ├── 02-working/
+        │   ├── prompt-briefs/        prompt-brief-interactive.md · …-autonomous.md
+        │   ├── session-briefs/       session-brief.md
+        │   ├── release-notes/        release-note.md
+        │   └── tasks/                task.md
+        ├── 03-knowledge/
+        │   ├── gotchas/              knowledge-gotcha.md
+        │   ├── patterns/             knowledge-pattern.md
+        │   └── decisions/            knowledge-adr.md
+        ├── 04-operations/
+        │   ├── deployment/           deployment-checklist.md
+        │   └── runbooks/             runbook.md
+        ├── 05-reference/             tech-stack.md · naming-conventions.md
+        └── 06-agents/                agent-team.md · agent-role.md
 ```
 
-**The starter folder is the product. The methodology doc is the manual.**
+**The starter is the product — every folder ships with a starter template in it.**
+Copy it in and you have the structure, the Router, and a template in each folder
+ready to fill. The methodology doc is the manual. And it's **adaptive** — add your
+own folders and templates as your project needs them; this is a starting shape,
+not a cage. Learn how each folder works at [c2method.ai/docs](https://c2method.ai/docs).
 
 ---
 

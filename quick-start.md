@@ -8,58 +8,43 @@ C² (C-Squared) can be set up on a new or existing project in half a day. This g
 
 ---
 
-## Step 1 — Create the folder structure (15 minutes)
+## Step 1 — Copy the starter (5 minutes)
 
-Create this directory layout in your repo root:
+You don't build the structure by hand — the `starter/` folder **is** the
+structure, with a template already in every folder. Copy it into your repo root:
+
+```bash
+cp -r path/to/c2method/starter/. .
+```
+
+You now have:
 
 ```
+AGENTS.md                ← the Router (rename for your agent if needed)
+.claude/commands/        ← learn.md, audit.md
 docs/
-├── 01-planning/
-│   ├── prds/
-│   │   ├── backlog/
-│   │   ├── in-progress/
-│   │   ├── done/
-│   │   └── archived/
-│   └── strategy/
+├── 01-planning/product-requirements/   platform-prd.md · feature-prd.md
 ├── 02-working/
-│   ├── prompt-briefs/
-│   │   ├── backlog/
-│   │   ├── in-progress/
-│   │   ├── done/
-│   │   └── archived/
-│   ├── sessions/
-│   │   └── YYYY-MM/
-│   ├── tasks/
-│   └── releases/
-├── 03-knowledge/
-│   ├── gotchas/
-│   ├── patterns/
-│   └── decisions/
-├── 04-operations/
-│   ├── deployment/
-│   └── runbooks/
-├── 05-reference/
-│   ├── tech-stack.md
-│   └── naming-conventions.md
-├── 06-agents/
-│   ├── team.md           ← agent team design (who leads, who reviews, budgets)
-│   ├── [lead-agent]/     ← lead agent config and notes
-│   ├── [bench-agent]/
-│   │   └── reviews/      ← saved bench reviews with Actions Taken tables
-│   └── specialist/       ← specialist agent role definitions (see .claude/agents/ for executables)
-└── 07-metrics/
-    └── velocity/
+│   ├── prompt-briefs/    prompt-brief-interactive.md · prompt-brief-autonomous.md
+│   ├── session-briefs/   session-brief.md
+│   ├── release-notes/    release-note.md
+│   └── tasks/            task.md
+├── 03-knowledge/{gotchas, patterns, decisions}/   knowledge-*.md
+├── 04-operations/{deployment, runbooks}/          deployment-checklist.md · runbook.md
+├── 05-reference/         tech-stack.md · naming-conventions.md
+└── 06-agents/            agent-team.md · agent-role.md
 ```
 
-Add a `.gitkeep` to each empty directory so they commit.
-
-**Note on `06-agents/`:** This folder is for team design documents and saved reviews — not executable agent definitions. Executable subagent definitions (for Claude Code's `/agents` feature or equivalent toolchain agents) live in `.claude/agents/` at the repo root. The two folders are complementary: `.claude/agents/` holds *how* an agent works; `docs/06-agents/` holds *why* the team chose it and the record of its outputs.
+Every folder ships with a starter template — you fill them in, you don't create
+them. And it's **adaptive**: add folders (a `07-metrics/`, sub-folders under
+`01-planning/`, whatever your project needs). This is a starting shape, not a
+cage. Each folder is explained at [c2method.ai/docs](https://c2method.ai/docs).
 
 ---
 
 ## Step 2 — Design your agent team (20 minutes)
 
-Before writing a line of code, decide who's on the team. Copy `templates/agent-team.md` to `docs/06-agents/team.md` and fill in:
+Before writing a line of code, decide who's on the team. Open `docs/06-agents/agent-team.md` (already in your repo from Step 1) and fill in:
 
 - **Lead agent** — which AI coding agent runs the terminal sessions? (Claude Code, Grok CLI, Gemini CLI, Codex, etc.)
 - **Bench agent(s)** — which agent(s) provide independent review on PRDs, security, and architecture? Set budget caps now, before you need them.
@@ -71,11 +56,11 @@ C² is agent-agnostic. You are not committing to a vendor — you are committing
 
 ## Step 3 — Set up the Router (45 minutes)
 
-The Router is the single file every AI session starts from — the living index of your contextbase. Copy `starter/AGENTS.md` to your repo root, **named for your agent** so it's read automatically: keep it `AGENTS.md` (the cross-agent default — Codex, Cursor, and most), or use `CLAUDE.md` for Claude Code / `GEMINI.md` for Gemini. Ship it agent-correct from the start — don't rely on a rename you'll forget. (Want a single source of truth? Symlink it: `ln -s router.md AGENTS.md`.) Then fill in:
+The Router is the single file every AI session starts from — the living index of your contextbase. `AGENTS.md` is already in your repo from Step 1; **name it for your agent** so it's read automatically: keep it `AGENTS.md` (the cross-agent default — Codex, Cursor, and most), or rename to `CLAUDE.md` for Claude Code / `GEMINI.md` for Gemini. Then fill in:
 
 - Project name and one-line description
-- The current active PRDs (link to `docs/01-planning/prds/in-progress/`)
-- The most recent session brief (link to `docs/02-working/sessions/`)
+- The current active PRDs (link to `docs/01-planning/product-requirements/`)
+- The most recent session brief (link to `docs/02-working/session-briefs/`)
 - The knowledge index (link to `docs/03-knowledge/`)
 - The tech stack summary (link to `docs/05-reference/tech-stack.md`)
 
@@ -85,7 +70,7 @@ The Router is the single file every AI session starts from — the living index 
 
 ## Step 4 — Write the Platform PRD (30 minutes)
 
-One Platform PRD per product. This is the strategic layer everything inherits from. Copy the template from `templates/platform-prd.md`.
+One Platform PRD per product. This is the strategic layer everything inherits from. Fill in `docs/01-planning/product-requirements/platform-prd.md`.
 
 Answer these questions, and stop when you have them:
 - What does this product do in one sentence?
@@ -93,25 +78,25 @@ Answer these questions, and stop when you have them:
 - What are the 3 things it must do well?
 - What is explicitly out of scope?
 
-Commit it to `docs/01-planning/strategy/platform-prd.md`.
+It lives at `docs/01-planning/product-requirements/platform-prd.md`.
 
 ---
 
 ## Step 5 — Write your first Feature PRD (30 minutes)
 
-Pick one feature you're actively working on. Copy `templates/feature-prd.md`. Fill in the Problem, Users, Goals, and Non-goals sections. Leave the rest for later — a Feature PRD is a living document, not a requirements spec.
+Pick one feature you're actively working on. Fill in `docs/01-planning/product-requirements/feature-prd.md` (copy it once per feature). Fill in the Problem, Users, Goals, and Non-goals sections. Leave the rest for later — a Feature PRD is a living document, not a requirements spec.
 
 Status: `in-progress` (if already started) or `backlog` (if not).
 
-Commit to `docs/01-planning/prds/in-progress/` or `backlog/` accordingly.
+Set its `status:` to `in-progress` or `backlog` in the frontmatter — status is a field, not a folder.
 
-**Rule A reminder:** Maximum 5 PRDs in `in-progress/` at any time. If you already have 5, move one to `backlog/` before adding a new one.
+**Rule A reminder:** Maximum 5 PRDs at `status: in-progress` at any time. If you already have 5, set one back to `backlog` before starting another.
 
 ---
 
 ## Step 6 — Write your first Prompt Brief (30 minutes)
 
-Pick one concrete piece of work to do in this first session. Copy `templates/prompt-brief-interactive.md` (if you'll be present) or `prompt-brief-autonomous.md` (if not).
+Pick one concrete piece of work to do in this first session. Use `docs/02-working/prompt-briefs/prompt-brief-interactive.md` (if you'll be present) or `prompt-brief-autonomous.md` (if not).
 
 **Run the 6-item quality gate before doing anything:**
 
@@ -124,13 +109,13 @@ Pick one concrete piece of work to do in this first session. Copy `templates/pro
 
 If you can't answer all 6, don't start. Write the answers first.
 
-Commit the brief to `docs/02-working/prompt-briefs/in-progress/`.
+Commit the brief to `docs/02-working/prompt-briefs/`.
 
 ---
 
 ## Step 7 — Run the session, write the Session Brief (30 minutes)
 
-Run your first C² session. At the end, copy `templates/session-brief.md` and fill in:
+Run your first C² session. At the end, fill in `docs/02-working/session-briefs/session-brief.md`:
 
 - What was done (per item, linked to the PB)
 - Decisions made and why
@@ -138,17 +123,17 @@ Run your first C² session. At the end, copy `templates/session-brief.md` and fi
 - Key Discovery — **if this section has content, a `03-knowledge/` entry is required in this same commit**
 - Next session start state (what will the AI need to know at the start of next time?)
 
-Commit the session brief to `docs/02-working/sessions/YYYY-MM/`.
+Commit the session brief to `docs/02-working/session-briefs/`.
 
 ---
 
 ## Step 8 — Extract the first knowledge entry (15 minutes)
 
-If your session produced a Key Discovery — a gotcha, a pattern, a decision that will matter again — copy the appropriate template from `templates/knowledge-*.md` and commit it to `docs/03-knowledge/` in the same commit as the session brief.
+If your session produced a Key Discovery — a gotcha, a pattern, a decision that will matter again — use the matching template already in `docs/03-knowledge/{gotchas,patterns,decisions}/` and commit it in the same commit as the session brief.
 
 If there was no Key Discovery, skip this step. Never force it.
 
-This capture-then-consolidate habit is the **Learn loop**: grab discoveries fast during the session so nothing is lost, then periodically (end of week, before a big push) have the agent review recent learnings, merge duplicates into canonical docs, and refresh the Router's links. You run it *with* the agent — see `templates/learn-pass.md` — not as an installed tool.
+This capture-then-consolidate habit is the **Learn loop**: grab discoveries fast during the session so nothing is lost, then periodically (end of week, before a big push) have the agent review recent learnings, merge duplicates into canonical docs, and refresh the Router's links. You run it *with* the agent — see `.claude/commands/learn.md` — not as an installed tool.
 
 ---
 

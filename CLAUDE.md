@@ -19,19 +19,30 @@ project.
    Cascade, the codebase + contextbase model, the agent team, the anti-pattern
    catchers.
 2. **`quick-start.md`** — the half-day setup, step by step.
-3. **`starter/AGENTS.md`** — the Router template the user drops into their own
-   repo, named for their agent (`AGENTS.md` default, or `CLAUDE.md` / `GEMINI.md`).
-4. **`templates/`** — the contextbase artefacts: PRDs, prompt briefs, session
-   brief, knowledge templates, agent definitions, release note.
+3. **`starter/`** — the drop-in kit. It *is* the C² `docs/` structure, with a
+   starter template already in every folder, plus `AGENTS.md` (the Router,
+   named for the agent) and `.claude/commands/` (the learn + audit commands).
+
+## The structure (what each folder is for)
+
+- `docs/01-planning/product-requirements/` — Platform PRD + Feature PRDs
+- `docs/02-working/` — `prompt-briefs/`, `session-briefs/`, `release-notes/`, `tasks/`
+- `docs/03-knowledge/` — `gotchas/`, `patterns/`, `decisions/`
+- `docs/04-operations/` — `deployment/`, `runbooks/`
+- `docs/05-reference/` — tech stack, naming conventions
+- `docs/06-agents/` — agent team + role definitions
+
+**It's adaptive.** Add folders and templates as the project needs them — this is
+a starting shape, not a fixed model.
 
 ## Helping the user adopt C²
 
-1. Set up the `docs/` folder structure (see `quick-start.md`).
-2. Copy `starter/` into their repo and fill in the router.
-3. Design the agent team (`templates/agent-team.md`).
-4. Write the Platform PRD, then a Feature PRD, then the first Prompt Brief —
+1. Copy `starter/` into their repo (`cp -r starter/. .`) — they now have the
+   whole structure with a template in every folder.
+2. Fill in the Router (`AGENTS.md`) and the tech stack.
+3. Fill in the Platform PRD, a Feature PRD, then the first Prompt Brief —
    running the 6-item quality gate before any work starts.
-5. End the session with a Session Brief. That's the loop that compounds.
+4. End the session with a Session Brief. That's the loop that compounds.
 
 ## The one rule that matters
 
