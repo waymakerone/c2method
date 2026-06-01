@@ -2,11 +2,12 @@
 
 > **Your AI agent forgets everything between sessions. C² fixes that.**
 
-C² is a free, open source build method that turns AI coding agents into genuine
+C² is a free, open build method that turns AI coding agents into genuine
 development partners — for builders at any level.
 
 Not a theory. Built and battle-tested over two years and 1,000+ agent sessions
-shipping a production SaaS. Every template in this repo came from that build.
+shipping production software — SaaS platforms, websites, AI agents, and
+ecommerce stores. Every template in this repo came from that build.
 
 **Website & full method:** [c2method.ai](https://c2method.ai)
 
@@ -50,8 +51,10 @@ whatever you've already built.
    cp -r path/to/c2method/starter/. .
    ```
 
-   It carries the **.md Router** (`CLAUDE.md` — rename to `AGENTS.md` for Codex
-   or `GEMINI.md` for Gemini CLI) and the brief templates.
+   It carries the **Router** (`AGENTS.md` by default — the cross-agent standard;
+   use `CLAUDE.md` for Claude Code or `GEMINI.md` for Gemini) and the brief
+   templates. Name it for your agent so it's read automatically — don't rely on
+   a rename.
 
 2. **Fill in `CLAUDE.md`** — what the project is, the active work, where the
    knowledge index lives. This is the file your AI reads first, every session.
@@ -70,7 +73,7 @@ c2method/
 ├── methodology.md     ← the full method
 ├── quick-start.md     ← set up C² on a project in half a day
 ├── starter/           ← drop this into any project today
-│   └── CLAUDE.md       ← the .md Router: your AI's entry point
+│   └── AGENTS.md       ← the Router (router.md): your AI's entry point
 └── templates/         ← the contextbase artefacts
     ├── platform-prd.md
     ├── feature-prd.md
@@ -82,7 +85,8 @@ c2method/
     ├── knowledge-pattern.md
     ├── knowledge-adr.md
     ├── agent-team.md
-    └── agent-role.md
+    ├── agent-role.md
+    └── learn-pass.md    ← the Learn loop: capture & consolidate
 ```
 
 **The starter folder is the product. The methodology doc is the manual.**

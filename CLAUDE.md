@@ -19,8 +19,8 @@ project.
    Cascade, the codebase + contextbase model, the agent team, the anti-pattern
    catchers.
 2. **`quick-start.md`** — the half-day setup, step by step.
-3. **`starter/CLAUDE.md`** — the .md Router template the user drops into their
-   own repo (rename to `AGENTS.md` / `GEMINI.md` for other agents).
+3. **`starter/AGENTS.md`** — the Router template the user drops into their own
+   repo, named for their agent (`AGENTS.md` default, or `CLAUDE.md` / `GEMINI.md`).
 4. **`templates/`** — the contextbase artefacts: PRDs, prompt briefs, session
    brief, knowledge templates, agent definitions, release note.
 

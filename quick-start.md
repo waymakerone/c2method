@@ -59,7 +59,7 @@ Add a `.gitkeep` to each empty directory so they commit.
 
 ## Step 2 — Design your agent team (20 minutes)
 
-Before writing a line of code, decide who's on the team. Copy `c-squared/templates/agent-team.md` to `docs/06-agents/team.md` and fill in:
+Before writing a line of code, decide who's on the team. Copy `templates/agent-team.md` to `docs/06-agents/team.md` and fill in:
 
 - **Lead agent** — which AI coding agent runs the terminal sessions? (Claude Code, Grok CLI, Gemini CLI, Codex, etc.)
 - **Bench agent(s)** — which agent(s) provide independent review on PRDs, security, and architecture? Set budget caps now, before you need them.
@@ -69,9 +69,9 @@ C² is agent-agnostic. You are not committing to a vendor — you are committing
 
 ---
 
-## Step 3 — Write CLAUDE.md (45 minutes)
+## Step 3 — Set up the Router (45 minutes)
 
-This is the router — the single file every AI session starts from. Copy the template from `c-squared/starter/CLAUDE.md` and fill in:
+The Router is the single file every AI session starts from — the living index of your contextbase. Copy `starter/AGENTS.md` to your repo root, **named for your agent** so it's read automatically: keep it `AGENTS.md` (the cross-agent default — Codex, Cursor, and most), or use `CLAUDE.md` for Claude Code / `GEMINI.md` for Gemini. Ship it agent-correct from the start — don't rely on a rename you'll forget. (Want a single source of truth? Symlink it: `ln -s router.md AGENTS.md`.) Then fill in:
 
 - Project name and one-line description
 - The current active PRDs (link to `docs/01-planning/prds/in-progress/`)
@@ -79,13 +79,13 @@ This is the router — the single file every AI session starts from. Copy the te
 - The knowledge index (link to `docs/03-knowledge/`)
 - The tech stack summary (link to `docs/05-reference/tech-stack.md`)
 
-**Rule:** If CLAUDE.md doesn't link to it, the AI won't find it. Keep it current. Update it at the end of every session.
+**Rule:** If the Router doesn't link to it, the AI won't find it. Keep it current — update it at the end of every session, and it becomes your project's living wiki.
 
 ---
 
-## Step 3 — Write the Platform PRD (30 minutes)
+## Step 4 — Write the Platform PRD (30 minutes)
 
-One Platform PRD per product. This is the strategic layer everything inherits from. Copy the template from `c-squared/templates/platform-prd.md`.
+One Platform PRD per product. This is the strategic layer everything inherits from. Copy the template from `templates/platform-prd.md`.
 
 Answer these questions, and stop when you have them:
 - What does this product do in one sentence?
@@ -97,9 +97,9 @@ Commit it to `docs/01-planning/strategy/platform-prd.md`.
 
 ---
 
-## Step 4 — Write your first Feature PRD (30 minutes)
+## Step 5 — Write your first Feature PRD (30 minutes)
 
-Pick one feature you're actively working on. Copy `c-squared/templates/feature-prd.md`. Fill in the Problem, Users, Goals, and Non-goals sections. Leave the rest for later — a Feature PRD is a living document, not a requirements spec.
+Pick one feature you're actively working on. Copy `templates/feature-prd.md`. Fill in the Problem, Users, Goals, and Non-goals sections. Leave the rest for later — a Feature PRD is a living document, not a requirements spec.
 
 Status: `in-progress` (if already started) or `backlog` (if not).
 
@@ -109,9 +109,9 @@ Commit to `docs/01-planning/prds/in-progress/` or `backlog/` accordingly.
 
 ---
 
-## Step 5 — Write your first Prompt Brief (30 minutes)
+## Step 6 — Write your first Prompt Brief (30 minutes)
 
-Pick one concrete piece of work to do in this first session. Copy `c-squared/templates/prompt-brief-interactive.md` (if you'll be present) or `prompt-brief-autonomous.md` (if not).
+Pick one concrete piece of work to do in this first session. Copy `templates/prompt-brief-interactive.md` (if you'll be present) or `prompt-brief-autonomous.md` (if not).
 
 **Run the 6-item quality gate before doing anything:**
 
@@ -128,9 +128,9 @@ Commit the brief to `docs/02-working/prompt-briefs/in-progress/`.
 
 ---
 
-## Step 6 — Run the session, write the Session Brief (30 minutes)
+## Step 7 — Run the session, write the Session Brief (30 minutes)
 
-Run your first C² session. At the end, copy `c-squared/templates/session-brief.md` and fill in:
+Run your first C² session. At the end, copy `templates/session-brief.md` and fill in:
 
 - What was done (per item, linked to the PB)
 - Decisions made and why
@@ -142,18 +142,20 @@ Commit the session brief to `docs/02-working/sessions/YYYY-MM/`.
 
 ---
 
-## Step 7 — Extract the first knowledge entry (15 minutes)
+## Step 8 — Extract the first knowledge entry (15 minutes)
 
-If your session produced a Key Discovery — a gotcha, a pattern, a decision that will matter again — copy the appropriate template from `c-squared/templates/knowledge-*.md` and commit it to `docs/03-knowledge/` in the same commit as the session brief.
+If your session produced a Key Discovery — a gotcha, a pattern, a decision that will matter again — copy the appropriate template from `templates/knowledge-*.md` and commit it to `docs/03-knowledge/` in the same commit as the session brief.
 
 If there was no Key Discovery, skip this step. Never force it.
+
+This capture-then-consolidate habit is the **Learn loop**: grab discoveries fast during the session so nothing is lost, then periodically (end of week, before a big push) have the agent review recent learnings, merge duplicates into canonical docs, and refresh the Router's links. You run it *with* the agent — see `templates/learn-pass.md` — not as an installed tool.
 
 ---
 
 ## You're running C². Now the compounding starts.
 
 After your first session, you have:
-- A router (CLAUDE.md) that loads context automatically
+- A Router (AGENTS.md / CLAUDE.md) that loads context automatically
 - A PRD hierarchy (Platform → Feature)
 - A Prompt Brief with scope and acceptance criteria
 - A Session Brief that serves as AI memory and team communication

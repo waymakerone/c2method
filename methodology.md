@@ -128,9 +128,17 @@ After 50+ captures, the knowledge index is a library of battle-tested patterns. 
 
 ---
 
-## Context curation — the finite-window problem
+## How context stays lean — compaction
 
-The contextbase grows denser than the codebase, so no agent loads all of it into a finite window; "read the context first" becomes a selection problem. The **.md Router is the curator** — it links rather than embeds, so the agent pulls only what the work needs and lazy-loading *is* the compression. As it scales: load by surface, not completeness; read the knowledge *index*, not every file; treat the latest session brief as compressed history. Tracked as v1.2: what to do when even the curated slice exceeds budget — summarising an oversized index, archiving stale patterns, pruning the router.
+The contextbase grows denser than the codebase, so no agent loads all of it into a finite window; "read the context first" becomes a selection problem. C² keeps the working set small with three mechanisms, at different timescales:
+
+1. **The Session Brief — point-in-time compaction.** At every context break, the session is digested down to "what the next agent needs cold" and the raw transcript is dropped. Compaction is triggered by the break, not by the window filling up.
+
+2. **The Router — continuous compaction.** The Router (see below) links rather than embeds and is kept current, so each session loads a lean, curated slice rather than the whole contextbase. Lazy-loading *is* the compression: load by surface, not completeness; read the knowledge *index*, not every file; treat the latest session brief as compressed history.
+
+3. **The Learn loop — capture then consolidate.** During a session, capture discoveries fast — classify each (gotcha, pattern, ADR) and write it to `03-knowledge/` so nothing is lost mid-flow. Periodically (end of week, before a big push), consolidate: merge duplicates into canonical docs, archive stale patterns, and refresh the Router's links. This keeps the contextbase — and the Router's index — current without sprawl. It's a practice you run *with* the agent ("capture this learning"; "review recent learnings and update the canonical docs"), not a tool you install. See `templates/learn-pass.md`.
+
+When a single session's working set still overflows the window even after this, borrow in-session compaction (à la HumanLayer's ACE — research → plan → implement, keep utilisation lean). C²'s three mechanisms handle the durable, cross-session half.
 
 ---
 
@@ -222,13 +230,13 @@ Treating `docs/` as equally important to `apps/` — and having the AI write to 
 
 The autonomous Prompt Brief — particularly the pre-flight section listing specific files with exact line ranges and a reason for reading each — forces the brief author to think like a software architect *before* the agent touches anything. Traditional agile writes a ticket and trusts the developer figures out the approach. The autonomous PB specifies it, making execution reproducible and auditable. The per-item READ→IMPL→REVIEW→VERIFY→COMMIT cycle and the 45-minute blocker limit close the remaining gap.
 
-### 4. The .md Router pattern
+### 4. The Router
 
-A single markdown file at the repo root that every AI session reads first — lazy-loading exactly the context needed rather than pasting everything into every conversation. The router links to docs; the agent pulls what it needs.
+One file your AI session reads first — the living index of the whole contextbase, lazy-loading exactly the context a task needs rather than pasting everything into every conversation. The Router links to docs; the agent pulls only what it needs.
 
-The filename is agent-specific: `CLAUDE.md` for Claude Code, `AGENTS.md` for Codex, `GEMINI.md` for Gemini CLI. The pattern is agent-agnostic. What matters is the structure: one entry point, explicit links to active PRDs, the most recent session brief, the knowledge index, and the pilot rules. Every agent that reads files can read a router.
+We call the concept `router.md`. On disk you name it for your agent so it's read automatically — `AGENTS.md` (the emerging cross-agent default — Codex, Cursor, and most), `CLAUDE.md` for Claude Code, `GEMINI.md` for Gemini CLI. **Ship it agent-correct from day one; never rely on a rename that gets skipped** (the file silently won't be read). For a single source of truth, symlink the agent file to `router.md`. The pattern is agent-agnostic — every agent that reads files can read a Router.
 
-This is a well-engineered solution to a problem most teams are still brute-forcing — pasting entire docs into every prompt, manually restating context at the start of each session, or relying on the agent to remember things it structurally cannot. The router makes context loading systematic and reproducible.
+What matters is the structure *and the upkeep*: one entry point, with explicit links to active PRDs, the latest session brief, the knowledge index, and the pilot rules — kept current as the project grows. Maintained, the Router becomes the project's living wiki: the curated entry point that makes context loading systematic, reproducible, and lean. It's the cure for what most teams still brute-force — pasting entire docs into every prompt, restating context each session, or trusting the agent to remember what it structurally cannot.
 
 ### 5. Knowledge capture to git as compounding institutional memory
 
@@ -265,23 +273,22 @@ C² was formalised in May 2026 from production practice. The following methodolo
 
 **What remains genuinely novel to C²:** the Pilot/Crew mental model as a structural scope constraint; "contextbase" as vocabulary and investment framing (not just context delivery); P = aic² as an equation encoding the methodology's core mechanism; the .md Router named and framed as lazy-loading architecture; session briefs triggered by context breaks (not the clock); and multi-agent governance (lead/bench/specialist) as a practitioner discipline with budget controls and mandatory close-the-loop tables.
 
-**The practitioner-first claim:** Every methodology in the table above was designed by researchers theorising about AI-augmented development. C² emerged from production software delivery under real commercial pressure and was formalised afterward. That is a different epistemic foundation — and the productivity evidence reflects it.
+**The practitioner-first claim:** Every methodology in the table above was designed by researchers theorising about AI-augmented development. C² emerged from production software delivery under real commercial pressure and was formalised afterward. That is a different epistemic foundation — and the proof bears it out.
 
 ---
 
-## Productivity evidence
+## The proof
 
-C² has been validated in a production software environment running a real commercial product. The methodology was not designed and then tested; it evolved under delivery pressure and was formalised from working practice.
+C² has been validated across real production software — multiple commercial products (SaaS platforms, websites, agents, and ecommerce stores) built and shipped with it, not a lab experiment. The methodology was not designed and then tested; it evolved under delivery pressure and was formalised from what actually held up.
 
-**Individual lift:** Engineers operating under C² methodology show 3–8× output increase year-over-year on an individual basis, controlling for team size growth.
+We don't lead with a headline multiplier. The anonymous "Nx productivity" stat is exactly the kind of claim the dev community rejects — and it isn't the point. The proof is qualitative, structural, and verifiable:
 
-**Team lift:** Combined team output (commits, PRs shipped, features landed) increased by approximately 10× over the same two-month window compared to equivalent pre-methodology baseline.
+- **It shipped real software.** Multiple production products, over two years and 1,000+ AI agent sessions. The method isn't a theory about building — it came out of building.
+- **Pace didn't erode quality.** Under a much higher commit rate, code review kept up: merge discipline held rather than degraded.
+- **Knowledge compounded instead of evaporating.** Gotchas, patterns, and ADRs accumulated in `03-knowledge/`, in git — institutional memory that doesn't rot when a person leaves, and that no Confluence page can match.
+- **Product and engineering merged in the repo.** Strategy, PRD updates, and architecture decisions live in git alongside the code. The separation between "product work" and "engineering work" disappears.
 
-**Merge discipline maintained:** Code review speed improved (not degraded) under the higher commit rate — median time-to-merge fell 29% year-over-year. Pace did not erode quality.
-
-**Knowledge accumulation:** 50+ gotchas, patterns, and ADRs captured to `03-knowledge/` across the proving period. Zero of those are in a Confluence page that will rot.
-
-**PM integration:** Product decisions committed directly to the repository alongside code — strategy documents, PRD updates, and architecture decisions live in git alongside implementation. The separation between "product work" and "engineering work" in the repository is eliminated.
+The strongest evidence isn't a number we ask you to trust — it's that the commit history is public.
 
 ---
 
@@ -303,7 +310,7 @@ C² v1.0 shipped and worked. These are the v1.1 improvements being folded into t
 
 ## Using C² — the quick start
 
-1. **Set up the router.** A single markdown file at the repo root is the pilot's instrument panel — `CLAUDE.md` for Claude Code, `AGENTS.md` for Codex, `GEMINI.md` for Gemini CLI. It links to PRDs, the knowledge index, the current active work, and the pilot rules. Every AI session starts here.
+1. **Set up the Router.** One file your agent reads first — the living index of the contextbase. Name it for your agent so it's read automatically (`AGENTS.md` is the cross-agent default; `CLAUDE.md` for Claude Code, `GEMINI.md` for Gemini); ship it agent-correct, don't rely on a rename. It links to PRDs, the knowledge index, the current active work, and the pilot rules. Every AI session starts here.
 
 2. **Design your agent team.** Before writing a line of code, decide who's on the team. Document in `docs/06-agents/team.md`: which agent leads (reads context, writes code, manages git), which agent reviews (PRDs, security, architecture — budget-capped, never touches the codebase), and any specialist agents for repeatable tasks. C² is agent-agnostic — you are committing to roles, not vendors.
 

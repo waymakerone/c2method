@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 Discuss the method
+    url: https://github.com/waymakerone/c2method/discussions
+    about: Ideas, questions, and feedback on the C² method — start a discussion.
+  - name: 📖 Docs & guides
+    url: https://c2method.ai/docs
+    about: Read how to use the method before filing an issue.

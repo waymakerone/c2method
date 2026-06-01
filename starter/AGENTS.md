@@ -1,7 +1,13 @@
 # [Project Name] — AI Router
 
 > **C² Methodology | P = aic²**  
-> This file is the entry point for every AI session. Read it fully before touching any code.
+> This is the **Router** — the entry point for every AI session. Read it fully before touching any code.
+>
+> **Name this file for your agent so it's read automatically.** Keep it
+> `AGENTS.md` (the cross-agent default — Codex, Cursor, and most), or use
+> `CLAUDE.md` for Claude Code / `GEMINI.md` for Gemini. We call the concept
+> `router.md`; ship it under your agent's name — don't rely on a rename you'll
+> forget. (Single source of truth? `ln -s router.md AGENTS.md`.)
 
 ---
 
