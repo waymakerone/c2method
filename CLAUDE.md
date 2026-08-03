@@ -16,17 +16,20 @@ project.
 ## Read in this order
 
 1. **`methodology.md`** — the full method: the equation, the Pilot Model, the
-   Cascade, the codebase + contextbase model, the agent team, the anti-pattern
-   catchers.
+   Cascade, Flight Planning, the codebase + contextbase model, the agent team,
+   topology, anchors, and the six Principles.
 2. **`quick-start.md`** — the half-day setup, step by step.
-3. **`starter/`** — the drop-in kit. It *is* the C² `docs/` structure, with a
+3. **`flight-planning.md`** — the ceremony at both ends of a build: file a plan
+   before takeoff, close it on landing. Ships with an installable skill in
+   `skills/flight-plan/`.
+4. **`starter/`** — the drop-in kit. It *is* the C² `docs/` structure, with a
    starter template already in every folder, plus `AGENTS.md` (the Router,
    named for the agent) and `.claude/commands/` (the learn + audit commands).
 
 ## The structure (what each folder is for)
 
 - `docs/01-planning/product-requirements/` — Platform PRD + Feature PRDs
-- `docs/02-working/` — `prompt-briefs/`, `session-briefs/`, `release-notes/`, `tasks/`
+- `docs/02-working/` — `prompt-briefs/`, `session-briefs/`, `flight-plans/`, `release-notes/`, `tasks/`
 - `docs/03-knowledge/` — `gotchas/`, `patterns/`, `decisions/`
 - `docs/04-operations/` — `deployment/`, `runbooks/`
 - `docs/05-reference/` — tech stack, naming conventions
@@ -41,12 +44,22 @@ a starting shape, not a fixed model.
    whole structure with a template in every folder.
 2. Fill in the Router (`AGENTS.md`) and the tech stack.
 3. Fill in the Platform PRD, a Feature PRD, then the first Prompt Brief —
-   running the 6-item quality gate before any work starts.
+   running the 6-item quality gate before any work starts, and naming the
+   **anchor**: the one signal that decides done, which the agent cannot produce
+   by asserting it.
 4. End the session with a Session Brief. That's the loop that compounds.
 
 ## The one rule that matters
 
 Every session ends with a Session Brief. Everything else follows from that.
+
+## Two rules worth knowing early
+
+- **One agent per surface.** Agents may run at once only when no edge connects
+  them and no surface is shared. A surface is everything an agent mutates or
+  contends for — files, data, external resources, a deploy target.
+- **Don't loop on confidence. Loop on evidence.** "The agent says it's done" is
+  not a stop condition.
 
 ---
 

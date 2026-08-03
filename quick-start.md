@@ -102,12 +102,14 @@ Pick one concrete piece of work to do in this first session. Use `docs/02-workin
 
 1. Goal — one sentence, measurable done state
 2. Scope exclusions — what are you explicitly NOT building?
-3. Testable acceptance criteria — how will you verify it works?
+3. Testable acceptance criteria — how will you verify it works? **Name the anchor:** the one signal that decides done, which the agent cannot produce by asserting it (a test that ran, a query that returned rows, a deploy that resolved)
 4. Non-goals — what problems are out of scope for this brief?
 5. Testing approach — unit tests, integration, or manual?
 6. Definition of done — when is this committed and closed?
 
 If you can't answer all 6, don't start. Write the answers first.
+
+Size the brief so that **one brief ≈ one pull request**. A brief that can't be expressed as a single reviewable PR is really two briefs.
 
 Commit the brief to `docs/02-working/prompt-briefs/`.
 
@@ -122,6 +124,7 @@ Run your first C² session. At the end, fill in `docs/02-working/session-briefs/
 - Blockers encountered and how they were resolved
 - Key Discovery — **if this section has content, a `03-knowledge/` entry is required in this same commit**
 - Next session start state (what will the AI need to know at the start of next time?)
+- **Landing zone** — the believed delivery date and how far along the work is, so progress is visible without a stand-up
 
 Commit the session brief to `docs/02-working/session-briefs/`.
 
@@ -162,10 +165,13 @@ The next session starts from the Session Brief. The one after that builds on the
 | >5 PRDs in in-progress (WIP cap exceeded) | Create-not-finish drift | Move stale ones to backlog immediately |
 | Checking the gotcha box without committing the file | Knowledge evaporates | Key Discovery = knowledge file in the same commit |
 | Updating CLAUDE.md only occasionally | AI starts sessions with stale context | Update CLAUDE.md at end of every session |
+| Running two agents on one surface | Contradictory output, conflicts, no coherent brief | One agent per surface — agents run at once only when no edge connects them and no surface is shared |
+| Accepting "the agent says it's done" | Confident, unverified work ships | Name the anchor — a signal the agent cannot produce by asserting it |
+| Filing a plan and never closing it | The gotcha, the rationale and the estimate check never get written | Close what you file — the landing, the deviation, the anchor, the learning |
 
 ---
 
-## The monthly governance check (30 minutes)
+## The monthly review (30 minutes)
 
 Once a month, walk every PRD in `in-progress/`:
 

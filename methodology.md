@@ -66,13 +66,46 @@ This reframe matters structurally. It changes what the human works on:
 
 The crewman measures output in lines written. The pilot measures output in decisions made and outcomes shipped.
 
+### The pilot's posture is constant. The pilot's bottleneck is not.
+
+C² says the pilot directs, full stop, and that holds at every scale. What changes is what *constrains* them. These are four stages of one role, not four different roles:
+
+| Stage | The crew | What constrains the pilot | The question being asked |
+|---|---|---|---|
+| **Assisted** | one agent, a pair | **Your attention.** Trust is low and there is no self-verification, so you read everything and never look away. The work is synchronous — you sit and watch | *Do I need to read this?* |
+| **Parallel** | several agents, each isolated | **Review throughput.** You hand-write less and check several streams instead. Each agent verifies its own work before you see it | *Can I review this fast enough?* |
+| **Supervised autonomy** | more output than you can read | **Trust in the loop, and decision throughput.** "Did you read the code?" stops being the right question | *What context was the model missing, and how do we fix that for next time?* |
+| **Intent-steered** | monitored by exception | **Identifying what to automate**, and matching guardrails to each kind of work | *Is this something an engineer would have done?* |
+
+Two transitions carry the weight, and both are things C² already builds:
+
+- **Assisted → parallel** needs *a self-verification loop you trust* — tests, build, lint, an end-to-end run against a real environment. That is anchors, arrived at from a different direction.
+- **Parallel → supervised autonomy** needs *a way for the agent to pull in context: code, decisions, discussion.* That is the contextbase, named as the gating capability for autonomy.
+
+Note that the third stage's question — *what context was the model missing?* — is the closing gate's question. The stage and the ceremony line up, which is why the closing gate is what makes that stage survivable at all.
+
+### Two ladders, not one
+
+Adoption has two axes, and they get confused constantly:
+
+- **Risk of the work** — crawl (tests, small fixes, low-risk refactors) → walk (features behind review) → run (autonomous, well-fenced). This is the ladder C² already publishes, and it is correct.
+- **Agent count and the pilot's role** — assisted → parallel → supervised autonomy → intent-steered, above.
+
+They are orthogonal and both true. A team can sit at *run* on risk while still at *assisted* on count: one agent working unattended overnight on well-fenced tasks, with a pilot who reads every diff in the morning. Neither ladder alone explains that team. Ask which axis you are describing before claiming a level.
+
+### The graph gets a rung
+
+**Topology is a parallel → supervised-autonomy capability. If you are not already running concurrent agents behind a self-verification loop you trust, the graph is not your next move — the loop is.**
+
+That is the governor from "Topology is earned, not adopted", stated as something checkable. It is also the honest answer to a reader arriving from the hype wanting to fan out on day one: you can, and it will return twelve confident, unusable outputs, because the node contract and the anchor are what make a fan-out safe and neither exists yet.
+
 ---
 
 ## The Principles
 
-Five principles. Pilot in command.
+Six principles. Pilot in command.
 
-AI-augmented teams create faster than they complete — speed without command becomes drift. Five principles keep you the pilot, not a passenger:
+AI-augmented teams create faster than they complete — speed without command becomes drift. Six principles keep you the pilot, not a passenger:
 
 **A · Fly the plane — own it.** One human owns each PRD from intent to a verified outcome — accountable for the landing, not just the takeoff. Keep the cockpit small: you can only truly fly a few at once. Done means the result moved, not that code shipped.
 > **Guardrails:** a **WIP cap** — max 5 concurrent in-progress PRDs; anything above goes to backlog. (A team with 20 in-progress PRDs has 15 aspirations and 5 active projects — the cap makes that distinction impossible to ignore.) Enforced by a **monthly 30-minute review**: walk every in-progress PRD, update `completion_rationale` and `last_reviewed`, force-move stale ones to backlog.
@@ -85,6 +118,8 @@ AI-augmented teams create faster than they complete — speed without command be
 **D · Earn the green light — verify it.** An agent hands you confident, wrong code at machine speed. Its output is a proposal, not product: it ships when the tests pass and a human clears it. Verification before velocity.
 
 **E · Every flight makes the next one better — compound it.** Each delivery updates the contextbase, so the next agent starts from the new baseline — not from scratch. The team gets smarter every loop. That's the c².
+
+**F · Fly the formation — govern the spend.** A fleet breaks the arithmetic one agent and a budget-capped bench was built on: the run that cost one call now costs forty. Spend the expensive model where judgment lives, cheap models on bounded repetitive nodes, and plain code on the plumbing. Earn every barrier — it makes every node wait for the slowest. And declare the fan-out width in the plan before the fleet launches.
 
 ---
 
@@ -112,6 +147,24 @@ Each tier has a defined frontmatter contract and a folder lifecycle: `backlog �
 
 A session brief is written any time the AI's context is about to be interrupted or lost — not just at the end of a working day. Triggers include: a phone call, a meeting, a work break, closing the laptop, rebooting the machine, switching to a different task, or ending for the night. Any break where the AI context resets means a session brief is needed before the break. The question to ask is not "is the session finished?" but "if I came back to this cold, what would I need to know?"
 
+The session brief also carries the **landing zone** — the believed delivery date and how far along the work is. That is what makes progress visible without a stand-up: anyone can see who is flying what, when they expect to land, and how far in they are, by reading the trail rather than by interrupting the pilot.
+
+Set an honest bar and hold it mechanically. **One to two briefs on an active build day**; if a day of building produced none, something got skipped. And make it unskippable rather than virtuous — a CI check on any pull request that changes application code, plus a local pre-push warning so nobody discovers it from a red build. Genuinely trivial changes skip with an explicit label, used honestly. A rule that depends on remembering is a rule that decays.
+
+**The Cascade doesn't terminate. It closes on the PRD.** Release Notes and Weekly Announcements are optional roll-ups, so on paper the chain trails off into artefacts a team may never write. That drawing is wrong in a way that matters: the chain is a **loop**, and the PRD is its spine.
+
+**Read the PRD → write the PRD.** Every ceremony either reads the PRD or writes back to it, and nothing lives in a second place. The loop opens at Flight Planning, runs through the build and the gates, and closes when what was learned lands back on the PRD — which then goes out again, richer, as the next version.
+
+That is what makes a PRD *living* rather than merely long-lived. It is **versioned and compounding**: `v1.0 → v1.1 → v2.0`, where each version **absorbs** the last — a *bank switch* — leaving one live artefact that says where the work is **now**, built on its history rather than restarting from it.
+
+Flight Planning is where context is *spent* — the contextbase is read down through PRD, brief and task. Closing is where context is *made* — gotchas, patterns, decisions and the honest estimate-versus-actual flow back up. Every artefact in that return path was already prescribed by C². What was missing was the ceremony that produces them, at the exact moment a team feels finished and is least inclined to write anything down.
+
+**One brief ≈ one pull request.** The Prompt Brief is the atomic build unit, and the PR is where that unit becomes reviewable. Pinning the two together is what makes the barrier concrete: a brief that can't be expressed as one PR is really two briefs.
+
+**A surfaced blocker needs a destination.** The debug limit says *stop and surface it* — but a blocker surfaced into a conversation is a blocker nobody can see. Give it a field on the PRD, and make that field visible wherever the work is tracked. "Surface it" is only a rule if there is somewhere for it to land.
+
+**Master PRD → child PRDs.** The Router pattern applies here too: for a large surface, a master PRD acts as a router — it holds the map and links down — and any module big enough to deserve its own project gets a child PRD beneath it holding the detail. The master links; it does not duplicate.
+
 The session brief also serves as the moment to identify documentation obligations created by the session's work. Before committing, the pilot checks:
 
 - **Knowledge documents** — did this session produce a gotcha, pattern, or architectural decision that future sessions will need? If yes, the knowledge file is identified in the brief and committed in the same session.
@@ -123,19 +176,57 @@ The session brief is the checkpoint between doing and knowing. Work without a br
 
 ---
 
+## Flight Planning — and Closing the Flight Plan
+
+Two ceremonies, one pair. A pilot files a plan before takeoff and closes it on arrival.
+
+**Filing.** Before an agent burns a build session, the pilot files a plan against the PRD and puts it in front of a few people. Five parts:
+
+1. **The line** — the explicit in-scope / out-of-scope boundary. The act that turns a wish into a route.
+2. **The briefs** — one Prompt Brief per atomic unit, each cleared against the 6-item quality gate.
+3. **The journey** — milestones, a believed landing point, an ETA. A filed expectation, not a deadline, so deviation is visible.
+4. **The shape** — the topology of the brief set: which briefs are independent (fan out), which are joined by an edge and must sequence, where the barrier sits, which edges get a bench pass. The journey says *when*; the shape says *how the work is wired*. It is cheap to add because every brief's pre-flight file/line table already declares that brief's surface — the arrows are derivable from artefacts the ceremony already produces. If no two briefs are independent, say so and file four parts. A graph buys breadth, not judgment.
+5. **The red line** *(optional)* — a couple of mocked pages to bounce off.
+
+The plan doc is a **throwaway** — a meeting agenda, not a third source of truth. The PRD and its briefs stay canonical.
+
+**Three gates, at three altitudes — never conflate them.** A cycle passes through three human gates. **Flight plan** (per PRD): *is this the right route, and is the plan flyable?* — held by the owner of the intent, before any build. **Pull request** (per PR): *does this build do what its brief said?* — held by engineering, the QA evidence and a peer. **Closing** (per PRD): *is the shipped thing right, and what did we learn?* — held by the same owner who cleared the flight plan. The middle gate is correctness. The outer two are judgement, held by one owner, bookending the build — which is what stops a plan being approved by one standard and accepted by another.
+
+**Closing.** A filed flight plan must be closed on arrival — leave it open and air traffic control launches a search. C² had a ceremony for takeoff and none for landing. **Closing the Flight Plan** is the gate where what was filed is reconciled with what landed, and someone with the authority to reject says *this is done* or *this is not.* It sits at a higher altitude than the PR gate — not *is the build correct?* but *is the shipped thing right?* — and it carries the lens engineering review structurally can't apply: does this meet the intent, and does it look right against the design system. Run that lens whether or not a designer is in the room, so it never gets skipped. Not a demo, not a retro. Four parts:
+
+- **The landing** — what was actually built, against the line that was drawn.
+- **The deviation** — where the route changed and why. Zero judgment; the plan exists to make drift visible.
+- **The anchor** — the evidence that decides done: tests that ran, the query that returned rows, the deploy that resolved. Not "the agent says it's done."
+- **The learning** — what the contextbase gains: gotchas, patterns, ADRs, the PRD's `completion_rationale`, estimated versus actual.
+
+Why it belongs in the method, derived three ways: a **harness** is gather → act → verify, and C² had a ceremony for gather and none for verify; every **loop** needs a stop condition, and the stop condition must be evidence rather than confidence; every **fan-out** needs a barrier, and the closing gate is the barrier where the human sits.
+
+**Flight Planning is where context is spent. Closing is where context is made.** C² already prescribed every artefact the closing produces — session brief, knowledge capture, `completion_rationale`, estimated versus actual — and prescribed no ceremony that produces them. They depended on discipline at the exact moment a team feels finished. The closing gate is the Cascade's real terminus, and the Session Brief is its output.
+
+**The findings need structure, or they evaporate.** A review produces a pile of *we should fix that* and *we should add that*, and in most rooms it dies in the room. The structure that stops it is cheap: every finding gets a **stable ID**, written onto the PRD in one section; **tagged FIX or ADD** (wrong today versus new capability — conflating them is how a bug list turns into a roadmap and nothing gets fixed); grouped by surface and attributed; **the keystone flagged and the list sequenced** — keystone first, then trust fixes, then high-value adds, then the design pass; and **the PR that resolves one references its ID**, so the trail runs review → PRD → PR → shipped and is auditable from git alone. Those findings are the seed for the next flight plan. If an agent prepares the capture, it **stops at captured** — it does not prioritise and does not build. Sequencing is judgement.
+
+**The sweep belongs to the next flight plan, not to the closing.** A findings section that only grows will drown the PRD in its own history. So it is bounded, and swept at the version bank-switch by the *next* plan: durable decisions promoted into the spec or `03-knowledge/` then cleared, done admin cleared outright (the trail lives in the closing PR, the release note and `git log`), unfinished items carried forward, the feature list reconciled against what shipped. **The closing appends at the end of a cycle; the next flight plan sweeps at the start of the next.** That is how a PRD compounds without hoarding — the mechanism behind "living, not frozen", which is otherwise just a sentiment.
+
+**The ceremony scales, it does not toggle.** With a crew it is a room. Alone it is the human review where you check the agent did what you actually wanted. The solo pilot is the reader who most needs the gate and most easily skips it. An agent may prepare a closing; an agent may never close one, for the same reason it may never file one.
+
+---
+
 ## The Codebase + Contextbase Model
 
 ```
 project/
 ├── apps/             ← codebase (what runs)
-└── docs/
-    ├── 01-planning/  ← PRDs, strategy, methodology
-    ├── 02-working/   ← Prompt Briefs, sessions, tasks, releases
-    ├── 03-knowledge/ ← Patterns, gotchas, ADRs  ← the self-improving layer
-    ├── 04-operations/← Deployment, runbooks, debugging
-    ├── 05-reference/ ← Tech stack, naming, constants
-    └── 06-agents/    ← Agent team design, roles, protocols, reviews
+├── docs/
+│   ├── 01-planning/  ← PRDs, strategy, methodology
+│   ├── 02-working/   ← Prompt Briefs, sessions, tasks, releases
+│   ├── 03-knowledge/ ← Patterns, gotchas, ADRs  ← the self-improving layer
+│   ├── 04-operations/← Deployment, runbooks, debugging
+│   ├── 05-reference/ ← Tech stack, naming, constants
+│   └── 06-agents/    ← Agent team design, roles, protocols, reviews
+└── <workflows>/      ← saved orchestration graphs  ← also contextbase
 ```
+
+The workflow directory is agent-specific in name (`.claude/workflows/` for one agent, an equivalent elsewhere) and belongs in the Router alongside `docs/`. A saved orchestration graph does not ship to users — it directs execution — so by C²'s own definition it is contextbase, not code. See "The graph as a contextbase artefact".
 
 The `03-knowledge/` directory is the methodology's highest-compounding asset. The mechanism:
 
@@ -174,7 +265,7 @@ The pilot's first design decision is the agent team: who leads, who reviews, and
 
 **The Lead Agent — one agent, one codebase surface**
 
-The lead agent reads the contextbase, writes code, manages git, extracts knowledge to `03-knowledge/`, and writes session briefs. It is the primary executor. Choose the agent that best fits your stack, your budget, and your workflow — then commit to it for a feature area. Running 4+ agents simultaneously on the same problem creates conflicting recommendations, worktree conflicts, and session briefs that are impossible to write. One agent leads per surface.
+The lead agent reads the contextbase, writes code, manages git, extracts knowledge to `03-knowledge/`, and writes session briefs. It is the primary executor. Choose the agent that best fits your stack, your budget, and your workflow — then commit to it for a feature area. Running multiple agents simultaneously on the same surface creates conflicting recommendations, worktree conflicts, and session briefs that are impossible to write. One agent leads per surface — and *surface* is the constraint, not headcount. See "Topology" below.
 
 *Examples: Claude Code, Grok CLI, Gemini CLI, Codex CLI*
 
@@ -183,6 +274,8 @@ The lead agent reads the contextbase, writes code, manages git, extracts knowled
 Bench agents review, never execute. They are invoked for PRDs, security decisions, architecture choices, and any call where a second independent opinion changes the risk profile. Budget-controlled: set a monthly spend cap and a daily call limit. All bench reviews are saved to `docs/06-agents/[agent-name]/reviews/` with a mandatory `Actions Taken` close-the-loop table — the review has no value if the team doesn't record what was done with it.
 
 The value of a bench agent is *independence*. The lead agent has already made decisions about the code it wrote. The bench agent hasn't. That's the point.
+
+Independence is mechanical, not attitudinal: **the verifier receives the artefact, never the session that produced it** — fresh context, and a real signal to check against rather than the lead's account of itself. Where a finding can fail in more than one way, split the lens: three verifiers asking *is it correct · is it current · is the source real* catch what ten identical passes never will. See "Anchors — what makes a result count".
 
 *Examples: Grok (second opinion), Gemini (architecture review), a specialist model for security*
 
@@ -194,9 +287,110 @@ Some tasks are high-value and highly repeatable: QA review, release note authori
 
 ### The multi-agent anti-pattern
 
-Running multiple agents simultaneously on the same problem — regardless of which agents — burns cost, produces contradictory outputs, creates worktree conflicts, and makes session briefs impossible to write coherently. The pattern to avoid: two agents both modifying the same files in the same session. The pattern to use: one agent executes, one agent reviews, and they never work concurrently on the same surface.
+Running multiple agents simultaneously on the same surface — regardless of which agents — burns cost, produces contradictory outputs, creates worktree conflicts, and makes session briefs impossible to write coherently. The pattern to avoid: two agents both mutating the same thing in the same session. The pattern to use: one agent executes, one agent reviews, and they never work concurrently on the same surface.
 
-The anti-pattern most often emerges from urgency. A blocked session, a tight deadline, a complex bug — and the impulse is to throw more agents at it. That impulse is wrong. Clarify the brief, surface the blocker, and let one agent proceed. Multi-agent is a *sequential* practice (lead executes → bench reviews → lead acts on review), not a parallel one.
+The anti-pattern most often emerges from urgency. A blocked session, a tight deadline, a complex bug — and the impulse is to throw more agents at it. That impulse is wrong. Clarify the brief, surface the blocker, and let one agent proceed.
+
+### Topology — when agents may run concurrently
+
+The rule above is about **contention**, not **concurrency**. Conflating the two is what made it read as a ban on parallelism:
+
+- **Contention** — two agents mutating the same surface. Real, expensive, correctly forbidden.
+- **Concurrency** — N agents doing N bounded jobs that share no surface. Not a failure mode at all.
+
+**The rule: agents may run concurrently exactly when no edge connects them and no surface is shared.** An *edge* means one agent's output is another's input. A *surface* is everything an agent mutates or contends for — files, data, external resources, a deploy target. Two agents on one surface is the anti-pattern, regardless of how urgent the session feels. Twelve agents on twelve disjoint surfaces, each with a brief that clears the quality gate, is the method working. Worktree isolation is the seatbelt for the one topology that needs it — parallel writes — not a tax on every run.
+
+Lead-and-bench stays sequential because there *is* an edge: the bench reviews what the lead produced. Sequence what's connected; run what isn't.
+
+**A surface is wider than a file list.** The failure that catches people is *false independence* — two agents whose briefs never mention each other, colliding over a shared workspace, a shared database, a rate-limited external API, or one deploy target. Anything shared is a hidden edge, and hidden edges bite hardest because no brief says they exist. When you draw the topology, ask what each brief *contends for*, not only what it writes.
+
+**The vocabulary is structural, not tool-specific.** A **node** is one agent doing one bounded job. An **edge** is the artefact that crosses between two of them. A **barrier** is where parallel work merges. **Isolation** stops one node poisoning the others. A **verified edge** is a result that gets an independent pass before it counts. C² already has all five under other names — a Prompt Brief is a node contract, a bench agent is a verifier on an edge, an integration brief or a PR is a barrier, worktrees are isolation. Some agents ship a runner for this; the doctrine belongs to the method, and the runner is one implementation of it.
+
+**Where each level lives.** The three fit together cleanly, and only one of them is new:
+
+- **The brief is the node** — one bounded job, contracted by the 6-item gate plus the pre-flight table, with an anchor that decides done.
+- **Inside a node, execution is a loop** — READ → IMPL → REVIEW → VERIFY → COMMIT per item, the anchor as its stop condition, the blocker limit as its escape hatch.
+- **Between nodes, the flight plan draws the graph** — edges, the barrier, verified edges. This is the only level that needs a *plan* to decide it: a node can't see its siblings, and a loop can't see outside itself.
+
+That is why Flight Planning is the load-bearing ceremony for all of this. The plan sits above the brief set and is its **execution contract** — it decides the wiring, and every brief runs its loop inside whatever wiring it is given. And **the shape is always drawn; sometimes it comes out as a line.** A line is a graph with one edge in and one edge out, so "this is a line, and here is why" is a filed finding. Never asking is the failure.
+
+### When not to build one
+
+A graph buys breadth. It does not buy judgment. Skip it when the task is small or isolated; when the work is exploratory and you don't yet know what you're looking for, so you need to steer; when the steps genuinely depend on each other; and when you want to approve every step.
+
+The tell: **if you cannot find two briefs with no edge between them, there is no graph to build.** It's a loop — one brief, a lead agent, a bench review — and a loop is the right tool most days.
+
+That last case reads as an objection to the Pilot model, and it deserves a straight answer rather than a dodge: **the pilot's gate is at *filed*, not at every node.** A pilot doesn't approve each aileron movement; they file a route, fly it, and own the deviation. That is what Flight Planning already is, and it is why the ceremony carries the topology — see `flight-planning.md`, "the shape". Approve the topology, not the traffic.
+
+### Cost governance in the graph era
+
+The lead-plus-budget-capped-bench arithmetic breaks the moment a fleet arrives: the same run that cost one call now costs forty. A published figure makes the scale concrete — one large runtime port ran roughly 50 workflows with up to 64 concurrent agents over about eleven days, for roughly **US$165,000** in usage. That is not a cautionary tale, because it bought something close to a year of work. It is the number that turns model tiering from a tip into a budget decision.
+
+Two rules hold it:
+
+- **Spend the expensive model where judgment lives** — and cheap models on bounded, repetitive nodes. Most reduce steps (flatten, dedupe, filter) are plain code, not agents at all. Spending a model call on plumbing is paying rent on your own wiring.
+- **Earn every barrier.** A barrier makes every node wait for the slowest, so it is justified only by a genuine cross-node dependency: deduping across the whole set, an early exit on the total, a synthesis that has to compare findings against each other. "It's cleaner" is not a dependency.
+
+C² already caps bench spend daily and monthly. The graph era points the same discipline at *fan-out width*, with the cap declared in the plan before the fleet launches — a filed shape that doesn't say how wide it goes is not a filed shape.
+
+### Topology is earned, not adopted
+
+The most common failure in this whole shift is diagramming a large workflow before observing how the work actually behaves. It produces brittle structure and premature control. The prescribed order is: simpler setup → collect traces → find the stable patterns → formalise only what deserves control.
+
+C² has the answer nobody else can claim: **the contextbase *is* the trace collection.** Session briefs and gotchas are the accumulated record of which surfaces collide, which briefs stalled, and which patterns repeated often enough to be worth freezing into a topology. A team fifty sessions into C² has exactly the evidence base this warns you to gather first. A team on day one should be writing briefs, not drawing graphs.
+
+Worth noticing how much agreement there is on this point. The topology primer says *earn the barrier*. The critique of it says *anchor, or the graph agrees with itself*. The taxonomy piece says *building the graph too early is mistake number one*. The adoption ladder says *don't scale agent count before the loop has earned trust*. Four independent framings, one conclusion: **the graph is the last thing you build, not the first.**
+---
+
+## Anchors — what makes a result count
+
+**Do not loop on confidence. Loop on evidence.**
+
+"The agent says it is done" is not a stop condition. Neither is "the review passed", when the review read the builder's own account of the work. Build a system of agents all checking each other's reports and you get something consistent and unverified — it fails exactly the way a single agent fails, only later, more expensively, and with far more green lights on the way down.
+
+An **anchor** is a signal no agent in the run can produce by asserting it. A test that actually ran — not "should pass", *did* pass. A query that returned rows. A deploy that resolved. A metric that moved. The anchor is what the Definition of Done is *for*, and it is the entire reason the word *testable* is in the quality gate.
+
+**Every Prompt Brief names its anchor.** Not a seventh gate item — it folds into the third, because "testable acceptance criteria" was always this idea, stated too politely to survive an agent that wants to be finished. The gate stays six items. Item three now asks *which signal decides, and can the agent fake it?*
+
+### Frozen rules
+
+Some rules are non-negotiable precisely *because* they are the ones under pressure — the rules an optimiser would bend to win. Name them, and mark them frozen. Examples from production:
+
+- the write-path check that runs after any constraint migration — a near-empty table is a broken writer, not low adoption
+- the file-size cap
+- never fabricate data to make the software look like it works
+
+Every frozen rule exists because it was bent once and something broke. The list is per-project and belongs in the contextbase alongside the gotchas. A system is only as honest as the things inside it that refuse to move.
+
+### Independence is mechanical, not attitudinal
+
+C² has always said the bench agent's value *is* independence — "the lead agent has already made decisions about the code it wrote; the bench agent hasn't." True, and stated as a property rather than as a requirement, which left the mechanism unspecified. The mechanism:
+
+**The verifier receives the artefact, never the session that produced it.** Fresh context, and a real signal to check against — not the lead's account of itself. A review run inside the builder's context is the builder agreeing with itself in a different font.
+
+Three conditions make it mechanical rather than aspirational:
+
+1. **A different model from the one that wrote the code.** Two models catch different blind spots. One model checking itself catches the ones it already missed.
+2. **Inputs the author does not control.** Run the verification where the builder cannot touch it — in CI, from the acceptance criteria, the diff, and the evidence journal. An author running the verifier on their own machine, on inputs they assembled, is self-assessment with an extra step.
+3. **Teeth.** A dispute blocks the merge. A verifier whose objection is advisory is a verifier that gets overruled at 5pm on a Friday.
+
+That is also the honest answer to "does this replace the tester?" It doesn't — it redistributes the job. **Three moves, three different owners:** the engineer who built it runs the QA and records the evidence; an independent model verifies the pass where the author can't reach it; a peer confirms and approves. A second set of human eyes doesn't disappear. It stops being one person's desk.
+
+**And split the lens.** One skeptic asks one question. Three verifiers asking *is it correct · is it current · is the source real* catch what ten identical passes never will. C² already routes PRDs, security and architecture to the bench as separate call types — naming them as lenses on the same artefact is a small generalisation with real yield on auth, payments, and anything touching row-level security.
+
+### The 30-minute debug limit — name the layer before you escalate
+
+The limit says stop and escalate. It does not say stop and ask *what*. Most stalled sessions are debugged at the wrong layer: a prompt rewritten when the tool was missing, a topology redrawn when the stop rule was never defined.
+
+At thirty minutes, before escalating, name the layer that owns the failure:
+
+| The symptom | The layer that owns it |
+|---|---|
+| **Cannot operate** — missing tool, stale state, bad permissions, no visibility | The environment |
+| **Almost works but unreliable** — close-but-weak output, inconsistent success, no proof of completion | The loop and its stop rule |
+| **The process itself is complex** — specialists, approvals, branching, parallel paths | The topology |
+
+This is a diagnostic for *what broke*. It is deliberately **not** C²'s stack of *what you build* — prompt ⊂ context ⊂ harness, where C² sits at the harness layer and contains the other two (see "Where C² sits"). Different question, different three layers. Don't collapse them.
 
 ---
 
@@ -262,6 +456,14 @@ Team standup communication is a side effect, not the purpose.
 
 Lead agent + bench agent with budget controls, mandatory output saved, and close-the-loop `Actions Taken` tables. This is disciplined multi-agent governance, not ad hoc "ask ChatGPT about the diff."
 
+### 8. The graph as a contextbase artefact
+
+A fleet of agents fans out, converges, prints an answer — and the shape that produced it evaporates. Run the same job next month and the topology gets rebuilt from scratch. Nothing compounds. That is the question the graph literature does not ask, and C² is the only method with a native answer, because it already holds that the durable asset is the guidance rather than the output.
+
+**A saved orchestration graph is not code.** It does not ship to users; it directs execution. By C²'s own definition that makes it **contextbase** — and the densest form of it yet identified: a topology that worked once, version-controlled, re-runnable by name by anyone who clones the repo. The workflow directory therefore joins `docs/` as a contextbase surface, and belongs in the Router like any other. The directory is agent-specific (`.claude/workflows/` for one, an equivalent elsewhere); the *claim* is not.
+
+The mechanism, stated as a mechanism rather than a slogan: **a fleet without a contextbase produces twelve findings and forgets all twelve.** Every fan-out node writes what it learned to `03-knowledge/`. The barrier dedupes rather than re-discovers. The session brief is the edge that carries state to the next run. That is the whole difference between *running* a graph and *compounding* one — and it is why the governor above ("topology is earned, not adopted") is not a caution bolted on afterwards but a consequence of the same claim: the contextbase is both what makes a graph worth saving and what tells you a graph is warranted yet.
+
 ---
 
 ## Methodology landscape and prior art
@@ -300,20 +502,37 @@ The strongest evidence isn't a number we ask you to trust — it's that the comm
 
 ---
 
-## The gaps currently being closed (v1.1)
+## The gaps being closed
 
-C² v1.0 shipped and worked. These are the v1.1 improvements being folded into the templates:
+C² v1.0 shipped and worked. Each release folds a short list of improvements into the templates and the doctrine. **The version tag travels with the item, not the section** — a heading stamped with one number goes stale on the next release.
 
-1. **Gotcha capture gate** — Knowledge extraction moves from checkbox to commit requirement. A session brief with a non-empty Key Discovery is not complete until its `03-knowledge/` file is committed in the same session.
+### Shipped
 
-2. **Universal PB quality gate** — The 6-item quality checklist (goal, scope exclusions, testable AC, non-goals, testing approach, definition of done) now applies to all Prompt Briefs — interactive and autonomous. The inconsistency between brief types is removed.
+1. **Gotcha capture gate** *(v1.1 — shipped)* — Knowledge extraction moved from checkbox to commit requirement. A session brief with a non-empty Key Discovery is not complete until its `03-knowledge/` file is committed in the same session.
 
-3. **Mid-brief checkpoint** — Autonomous Prompt Briefs with 4+ items include a mandatory checkpoint paragraph after item 3. One paragraph: approach still valid? If not, surface now. Prevents architectural drift in long autonomous runs.
+2. **Universal PB quality gate** *(v1.1 — shipped)* — The 6-item quality checklist (goal, scope exclusions, testable AC, non-goals, testing approach, definition of done) applies to all Prompt Briefs, interactive and autonomous. Both templates carry it.
 
-4. **Estimation aggregation** — `estimated_hours` / `actual_hours` frontmatter fields in completed PBs are read by a metrics script and output as estimation accuracy by area. The calibration data exists; the reading of it is now automated.
+3. **Mid-brief checkpoint** *(v1.1 — shipped)* — Autonomous Prompt Briefs with 4+ items carry a mandatory checkpoint paragraph after item 3. One paragraph: approach still valid? If not, surface now. Prevents architectural drift in long autonomous runs.
 
-5. **CI coverage gate** — Policy ("tests are part of the build") is backed by mechanical enforcement. Per-new-file coverage requirement or mandatory test file alongside new source files. The rule becomes unskippable.
+4. **The anchor** *(v1.3 — shipped)* — Every Prompt Brief names the one signal that decides done, folded into the gate's testable-acceptance-criteria item rather than added as a seventh. The gate keeps its 6-item identity. See "Anchors — what makes a result count".
 
+5. **The shape** *(v1.3 — shipped)* — Flight Planning emits a topology, not just a schedule. Five parts, and the `flight-plan` skill derives the shape from the brief set's own pre-flight tables.
+
+6. **Closing the Flight Plan** *(v1.3 — shipped)* — the landing gate, and the Cascade's real terminus. A filed plan is closed on arrival. See `flight-planning.md`.
+
+### Open
+
+7. **Estimation aggregation** *(v1.1 — open)* — `estimated_hours` / `actual_hours` exist in the templates and the closing gate now asks for the comparison, but the metrics script that reads them across completed PBs and reports accuracy by area is per-project and still unwritten.
+
+8. **CI coverage gate** *(v1.1 — open)* — policy ("tests are part of the build") backed by mechanical enforcement: a per-new-file coverage requirement, or a mandatory test file alongside new source files. The rule becomes unskippable.
+
+9. **Curated slice still too big** *(v1.4)* — what to do when even the Router-curated slice exceeds the window: summarising an oversized knowledge index, archiving stale patterns, pruning the Router. Carried forward from v1.2 — the three compaction mechanisms handle everything short of this.
+
+10. **The filed plan compiles to a graph** *(v1.4)* — a filed flight plan already names the independent briefs, the edges, the barrier and the verified edges. The next increment emits a runnable orchestration script from it, for whichever runner the team uses. The human gate stays exactly where C² already puts it: **the plan compiles, the pilot still clears takeoff.**
+
+11. **Replayable traces** *(v1.4)* — C² has session briefs, which are narrative. It has no way to replay a run or attribute an improvement to a specific change. A method that tells you to loop on evidence should be able to compare two runs, not only describe them.
+
+12. **Tool-surface discipline** *(v1.4)* — a crowded tool surface causes selection mistakes, noisy context and a wider risk surface. C² has doctrine for what an agent *reads* and none for what it can *reach*. The fix is the Router's own pattern pointed at tools: curate by surface, not by completeness.
 ---
 
 ## Using C² — the quick start
@@ -334,4 +553,4 @@ C² v1.0 shipped and worked. These are the v1.1 improvements being folded into t
 
 ---
 
-*C² methodology. First formalised May 2026. v1.2 additions (harness positioning; context curation), May 2026.*
+*C² methodology. First formalised May 2026. v1.2 additions (harness positioning; context curation), May 2026. v1.3 additions (topology and the concurrency rule; anchors, frozen rules and mechanical bench independence; Closing the Flight Plan; the graph as a contextbase artefact; the pilot's stages and the two ladders), August 2026.*

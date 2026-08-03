@@ -19,7 +19,7 @@ tags: [platform-prd]
 
 ## The product in one sentence
 
-**[One sentence. Subject + verb + outcome + user. e.g., "BuildCam is a construction site monitoring platform that gives project managers real-time visibility into site progress via time-lapse and live camera feeds."]**
+**[One sentence. Subject + verb + outcome + user. e.g., "Northwind is a site monitoring platform that gives project managers real-time visibility into progress via time-lapse and live camera feeds."]**
 
 ---
 

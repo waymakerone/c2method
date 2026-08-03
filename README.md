@@ -70,7 +70,9 @@ Full half-day setup: **[c2method.ai/start](https://c2method.ai/start)**
 
 ```
 c2method/
-├── methodology.md   ← the full method        quick-start.md   ← half-day setup
+├── methodology.md      ← the full method       quick-start.md  ← half-day setup
+├── flight-planning.md  ← the ceremony: file a plan before takeoff, close it on landing
+├── skills/flight-plan/ ← installable skill — copy into your repo's .claude/skills/
 └── starter/         ← copy this into your project (cp -r starter/. your-project/)
     ├── AGENTS.md                      ← the Router (router.md): your AI reads this first
     ├── .claude/commands/             ← learn.md, audit.md (agent commands)

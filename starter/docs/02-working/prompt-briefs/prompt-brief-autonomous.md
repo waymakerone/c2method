@@ -15,6 +15,8 @@ tags: [prompt-brief, autonomous]
 # PB — [Feature / Task Name]
 
 > **Autonomous brief.** The pilot will not be present for this session. The AI executes without interruption. Precision in this document is execution quality — a vague pre-flight produces a vague outcome. Every item in the pre-flight must be specific enough to act on without asking.
+>
+> **Size it to one pull request.** One brief ≈ one PR. A brief that can't be expressed as a single reviewable PR is really two briefs.
 
 ---
 
@@ -22,7 +24,7 @@ tags: [prompt-brief, autonomous]
 
 - [ ] **Goal** — What does done look like? (one sentence, measurable)
 - [ ] **Scope exclusions** — What is explicitly NOT being built?
-- [ ] **Testable acceptance criteria** — Specific, verifiable, not subjective
+- [ ] **Testable acceptance criteria** — Specific, verifiable, not subjective. **Name the anchor:** the one signal that decides done, which the agent cannot produce by asserting it
 - [ ] **Non-goals** — What problems are out of scope?
 - [ ] **Testing approach** — What tests will be written as part of this brief?
 - [ ] **Definition of done** — When is this committed and closed?
@@ -68,6 +70,10 @@ The AI reads these before writing a single line. List only what is directly rele
 
 ## Acceptance criteria
 
+**The anchor:** [the one signal that decides done — a test that actually ran, a query that returned rows, a deploy that resolved, a metric that moved. "The agent says it's done" is not an anchor. Do not loop on confidence. Loop on evidence.]
+
+**Frozen rules for this surface:** [rules that are non-negotiable *because* they are the ones under pressure here — the ones an optimiser would bend to win. Or "none beyond the project defaults".]
+
 - [ ] [AC 1 — specific and testable]
 - [ ] [AC 2]
 - [ ] [AC 3]
@@ -79,6 +85,8 @@ The AI reads these before writing a single line. List only what is directly rele
 Each item follows the READ → IMPL → REVIEW → VERIFY → COMMIT cycle. Do not start the next item until the current one is committed.
 
 **45-minute limit:** If blocked on any item for more than 45 minutes without a clear path forward, stop, write what you know in the session brief, and surface the blocker. Do not proceed to the next item on a broken foundation.
+
+**Name the layer before you surface it.** *Cannot operate* — missing tool, stale state, bad permissions, no visibility → **the environment**. *Almost works but unreliable* — close-but-weak output, inconsistent success, no proof of completion → **the loop and its stop rule**. *The process itself is complex* — branching, approvals, parallel paths → **the topology**. A blocker reported without its layer usually gets debugged at the wrong one.
 
 ---
 
@@ -127,6 +135,8 @@ Each item follows the READ → IMPL → REVIEW → VERIFY → COMMIT cycle. Do n
 ---
 
 ## Testing
+
+**The test plan for this slice.** Every brief carries its own, so nobody downstream is handed an untested build. This is what the verification gate checks against — and what the independent verifier reads, along with the diff and the evidence journal.
 
 Tests written as part of this brief:
 

@@ -15,6 +15,8 @@ tags: [prompt-brief, interactive]
 # PB — [Feature / Task Name]
 
 > **Interactive brief.** The pilot is present for this session. Use this template when you will be actively directing the AI — reviewing output, answering questions, making decisions in real time.
+>
+> **Size it to one pull request.** One brief ≈ one PR. A brief that can't be expressed as a single reviewable PR is really two briefs.
 
 ---
 
@@ -24,7 +26,7 @@ Do not start execution until all 6 items are answered. A brief that can't clear 
 
 - [ ] **Goal** — What does done look like? (one sentence, measurable)
 - [ ] **Scope exclusions** — What is explicitly NOT being built in this brief?
-- [ ] **Testable acceptance criteria** — How will you verify it works? (specific, not "it looks right")
+- [ ] **Testable acceptance criteria** — How will you verify it works? (specific, not "it looks right"). **Name the anchor:** the one signal that decides done, which the agent cannot produce by asserting it
 - [ ] **Non-goals** — What problems are out of scope for this brief?
 - [ ] **Testing approach** — Unit tests / integration tests / manual verification / none (with reason)?
 - [ ] **Definition of done** — When is this committed and closed?
@@ -66,6 +68,8 @@ What should the AI know before starting? Keep it tight — link to docs rather t
 
 Specific, testable. "It works" is not a criterion.
 
+**The anchor:** [the one signal that decides done — a test that actually ran, a query that returned rows, a deploy that resolved. "The agent says it's done" is not an anchor. Do not loop on confidence. Loop on evidence.]
+
 - [ ] [AC 1 — e.g., "Email invitation sends within 5 seconds of clicking Invite"]
 - [ ] [AC 2 — e.g., "Invited user appears in team list with status Pending"]
 - [ ] [AC 3]
@@ -73,6 +77,8 @@ Specific, testable. "It works" is not a criterion.
 ---
 
 ## Testing approach
+
+The test plan for this slice — every brief carries its own, so nobody downstream is handed an untested build.
 
 [ ] Unit tests for [which functions / components]  
 [ ] Integration test for [which flow]  

@@ -64,8 +64,8 @@ Scoped subagents with a tightly defined role and documented protocol for repeata
 
 ## Rules of engagement
 
-1. **One agent per surface.** The lead agent and bench agents never work on the same file at the same time.
-2. **Bench reviews are sequential, not parallel.** Lead executes → bench reviews → lead acts on review. Not concurrent.
+1. **One agent per surface.** A surface is everything an agent mutates or contends for — files, data, external resources, a deploy target. Two agents on one surface is the anti-pattern. Agents on disjoint surfaces, each with a brief that clears the quality gate, may run at the same time.
+2. **Bench reviews sequence because there is an edge.** Lead executes → bench reviews → lead acts on review. The bench reads what the lead produced, so the two are connected and must run in order. Work with no edge between it does not.
 3. **Budget enforcement is the pilot's responsibility.** Check the bench agent's call count before invoking. A bench review that blows the monthly budget because nobody checked is a pilot error.
 4. **All bench reviews are saved and actioned.** A review with no `Actions Taken` table is a review that didn't happen. Save it, write the table, commit it.
 5. **Specialist agents have their own protocols.** Read the agent definition before invoking. Don't invoke a specialist without understanding what it will do.

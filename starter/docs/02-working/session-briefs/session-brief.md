@@ -52,7 +52,12 @@ Decisions that a future session (or a team member) needs to understand. Include 
 
 Issues encountered. For each: what it was, how it was resolved (or if unresolved, what's needed next).
 
-- **[Blocker]:** [Resolution / escalation needed / waiting on X]
+Anything still open goes on the **PRD's Blocked field** as well as here — a blocker that only
+lives in a session brief is a blocker nobody tracking the work can see. Name the layer that owns
+it: *cannot operate* → the environment · *almost works but unreliable* → the loop and its stop
+rule · *the process itself is complex* → the topology.
+
+- **[Blocker]:** [Layer] — [Resolution / escalation needed / waiting on X]
 
 ---
 
@@ -100,7 +105,7 @@ Obligations from this session not yet closed. These move to the next session bri
 
 ## Test debt
 
-Tests that were deferred in this session, with the reason. These are tracked for the monthly PRD review.
+Tests that were deferred in this session, with the reason. These are tracked for the monthly review.
 
 - [Test description] — deferred because: [specific reason]
 
@@ -125,8 +130,24 @@ The most important section for continuity. Write this for the AI that will start
 
 ---
 
+## Landing zone
+
+Where this PRD is up to, so progress is visible without a stand-up. Anyone reading the brief trail
+can see who is flying what, when they expect to land, and how far in they are.
+
+**Believed landing:** [date — a filed expectation, not a hard deadline]  
+**Complete:** [X%]  
+**Confidence:** [on track / slipping — and what would change it]
+
+---
+
 ## Metrics
 
 **Session duration (approx):** [X hours]  
 **Items completed:** [X of Y]  
 **PB estimated_hours vs actual:** [Update PB frontmatter after this session]
+
+> **The bar:** one to two briefs on an active build day. If a day of building produced none,
+> something got skipped. Hold it mechanically rather than virtuously — a CI check on any PR that
+> touches application code, and a local pre-push warning so nobody meets it as a red build.
+> Genuinely trivial changes skip with an explicit label, used honestly.
