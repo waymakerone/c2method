@@ -2,17 +2,19 @@
 name: flight-plan
 description: >-
   Prepare a C² flight plan from a Feature PRD before any build session. Use when a pilot is
-  about to start work against a PRD and needs to file a plan for the team to review — it sweeps
-  the previous cycle, draws the scope line, interrogates the spec, drafts the Prompt Briefs, plots
-  the journey, draws the shape of the work, and emits a filed flight plan. It stops at *filed*; it
+  about to start work against a PRD and needs a plan filed for review — with their team, or with
+  themselves as the gate when they build alone. It sweeps the previous cycle, draws the scope
+  line, interrogates the spec, drafts the Prompt Briefs, plots the journey, draws the shape of
+  the work, and emits a filed flight plan. It stops at *filed*; it
   never starts building. Trigger phrases: "file a flight plan for <PRD>", "prep a flight plan",
   "run flight-plan on <PRD>".
 ---
 
 # flight-plan
 
-You prepare a **flight plan** for a pilot to file with their team before a build session, in
-the C² Method. A pilot files a plan before takeoff the way a pilot briefs air traffic control:
+You prepare a **flight plan** for a pilot to file before a build session, in the C² Method —
+filed with their team, or with themselves as the gate when they build alone. A pilot files a
+plan before takeoff the way a pilot briefs air traffic control:
 *this is where I'm going, this is what I'll build, the milestones along the way, and where I
 believe I'll land and at what time.* Your job is to get that plan ready to review.
 

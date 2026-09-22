@@ -20,9 +20,11 @@ Repo layout: `apps/` = runnable code · `docs/` = contextbase
 
 ---
 
-## Agent team
+## Your agents
 
-> C² is agent-agnostic. Document the current team in `docs/06-agents/team.md`.
+> C² is agent-agnostic. The roles below are roles, not headcount — solo with a
+> single agent this section is one line. Record the roster in
+> `docs/06-agents/team.md` if it grows past that.
 
 - **Lead:** [e.g., Claude Code — claude-sonnet-4-x]
 - **Bench:** [e.g., Grok — for PRD review, security, architecture. Budget: $X/month, N calls/day]
@@ -45,7 +47,7 @@ Repo layout: `apps/` = runnable code · `docs/` = contextbase
 
 [[docs/02-working/sessions/YYYY-MM/YYYY-MM-DD-BRIEF-NAME]]
 
-Read this first. It is the handoff from the last session — what was done, what was decided, what to start with.
+Read this first. It is how the next session — yours or anyone's — starts where the last one stopped: what was done, what was decided, what to start with.
 
 ---
 

@@ -4,6 +4,9 @@
 > This blueprint is the C² Method itself — the method for building anything with
 > AI coding agents. If you're an AI agent helping someone adopt C², read this
 > first, then the files it points to.
+>
+> C² runs the same shape at any size — one person with one agent, or a team
+> running many apps. The roles are roles, not headcount: solo, you play them all.
 
 ---
 
@@ -16,7 +19,7 @@ project.
 ## Read in this order
 
 1. **`methodology.md`** — the full method: the equation, the Pilot Model, the
-   Cascade, Flight Planning, the codebase + contextbase model, the agent team,
+   Cascade, Flight Planning, the codebase + contextbase model, your agents,
    topology, anchors, and the six Principles.
 2. **`quick-start.md`** — the half-day setup, step by step.
 3. **`flight-planning.md`** — the ceremony at both ends of a build: file a plan
@@ -33,7 +36,8 @@ project.
 - `docs/03-knowledge/` — `gotchas/`, `patterns/`, `decisions/`
 - `docs/04-operations/` — `deployment/`, `runbooks/`
 - `docs/05-reference/` — tech stack, naming conventions
-- `docs/06-agents/` — agent team + role definitions
+- `docs/06-agents/` — agent roster + role definitions (optional — solo with one
+  agent you may never need it)
 
 **It's adaptive.** Add folders and templates as the project needs them — this is
 a starting shape, not a fixed model.

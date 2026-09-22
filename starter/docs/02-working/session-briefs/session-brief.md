@@ -15,7 +15,7 @@ tags: [session-brief]
 
 > **This is AI memory.** Write this brief any time the AI context is about to be interrupted or lost — not only at end of day. Triggers: phone call, meeting, work break, closing the laptop, rebooting, switching tasks, hitting the context limit, or ending for the night. The question is not "is the session finished?" but "if I came back to this cold, what would I need to know?"
 >
-> The team's async standup is a side effect, not the primary purpose. Memory is the purpose.
+> The async standup is a side effect, not the primary purpose — and only if there's a team to read it. Memory is the purpose.
 
 ---
 
@@ -41,7 +41,7 @@ tags: [session-brief]
 
 ## Decisions made
 
-Decisions that a future session (or a team member) needs to understand. Include the reason.
+Decisions that a future session — or a teammate, if you have one — needs to understand. Include the reason.
 
 - **[Decision]:** [Rationale — why this, not something else]
 - **[Decision]:** [Rationale]
@@ -132,7 +132,7 @@ The most important section for continuity. Write this for the AI that will start
 
 ## Landing zone
 
-Where this PRD is up to, so progress is visible without a stand-up. Anyone reading the brief trail
+Where this PRD is up to, so progress is visible without asking anyone — and without a stand-up, if you have one. Anyone reading the brief trail
 can see who is flying what, when they expect to land, and how far in they are.
 
 **Believed landing:** [date — a filed expectation, not a hard deadline]  

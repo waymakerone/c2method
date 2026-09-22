@@ -19,6 +19,8 @@ Traditional methodologies optimise the codebase. C² optimises both. The context
 
 This is not a documentation culture. It is an **execution infrastructure**.
 
+C² runs the same shape at any size — one person with one agent, or a team running many apps. The roles are roles, not headcount: solo, you play them all.
+
 ---
 
 ## The equation
@@ -253,15 +255,15 @@ When a single session's working set still overflows the window even after this, 
 
 ---
 
-## The Agent Team
+## Your Agents
 
 **C² is agent-agnostic.** The methodology works with any AI coding agent running in the terminal — Claude Code, Grok CLI, Gemini CLI, Codex, Cursor, or any agent that can read files, write files, and commit to git. The contextbase is plain markdown. Any agent that can read markdown can use it.
 
 This matters. Choosing C² is not a commitment to a specific vendor. It is a commitment to a methodology. When a better agent ships — and they will keep shipping — you adopt it and the contextbase transfers intact. The context you've built doesn't belong to the agent; it belongs to the project.
 
-### Designing your agent team
+### Picking your agents
 
-The pilot's first design decision is the agent team: who leads, who reviews, and who handles specialist tasks. This is documented in `docs/06-agents/team.md` and kept current as the team evolves.
+The pilot's first design decision is the roster: which agent leads, which reviews, and which handles specialist tasks. These are roles, not headcount — solo with one agent, the roster is one line and you play every role yourself. Record it in `docs/06-agents/team.md` (optional at one agent) and keep it current as the roster changes.
 
 **The Lead Agent — one agent, one codebase surface**
 
@@ -539,7 +541,7 @@ C² v1.0 shipped and worked. Each release folds a short list of improvements int
 
 1. **Set up the Router.** One file your agent reads first — the living index of the contextbase. Name it for your agent so it's read automatically (`AGENTS.md` is the cross-agent default; `CLAUDE.md` for Claude Code, `GEMINI.md` for Gemini); ship it agent-correct, don't rely on a rename. It links to PRDs, the knowledge index, the current active work, and the pilot rules. Every AI session starts here.
 
-2. **Design your agent team.** Before writing a line of code, decide who's on the team. Document in `docs/06-agents/team.md`: which agent leads (reads context, writes code, manages git), which agent reviews (PRDs, security, architecture — budget-capped, never touches the codebase), and any specialist agents for repeatable tasks. C² is agent-agnostic — you are committing to roles, not vendors.
+2. **Pick your agents.** Decide which model plays which role. The default is one lead agent (reads context, writes code, manages git); add a bench reviewer (PRDs, security, architecture — budget-capped, never touches the codebase) when the risk earns it, and a specialist only when a repeatable job appears. Record it in `docs/06-agents/team.md` — solo with one agent that is one line, and optional. C² is agent-agnostic — you are committing to roles, not vendors, and roles are not headcount.
 
 3. **Write the Platform PRD.** What is this product? Who is it for? What does it not do? This is the strategic layer every feature PRD inherits from.
 

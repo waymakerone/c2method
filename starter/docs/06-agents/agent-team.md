@@ -1,6 +1,6 @@
 ---
 id: [generate]
-title: "Agent Team — [Project Name]"
+title: "Agent Roster — [Project Name]"
 type: agent-team
 project: [project name]
 created: YYYY-MM-DD
@@ -8,11 +8,13 @@ updated: YYYY-MM-DD
 tags: [agents, team, c-squared]
 ---
 
-# Agent Team — [Project Name]
+# Agent Roster — [Project Name]
 
-> The agent team design is a pilot decision. Document it here so every session knows who's on the team, what they're responsible for, and what the rules of engagement are. Update this when agents change, budgets change, or a new specialist is added.
+> **This folder is optional.** A solo project with one agent may never need it — the roster is a single lead and nothing else, and deleting `06-agents/` is fine. Fill it in when a second agent appears and the rules of engagement start to matter.
 >
-> C² is agent-agnostic. This team works with whatever agents best fit the project's stack, budget, and workflow — not a commitment to a specific vendor.
+> The roster is a pilot decision: which model plays which role, what each is responsible for, and what the rules of engagement are. These are roles, not headcount — solo, you play them all. Update this when agents change, budgets change, or a new specialist is added.
+>
+> C² is agent-agnostic. The roster works with whatever agents best fit the project's stack, budget, and workflow — not a commitment to a specific vendor.
 
 ---
 
@@ -76,5 +78,5 @@ Scoped subagents with a tightly defined role and documented protocol for repeata
 
 | Date | Change | Reason |
 |---|---|---|
-| YYYY-MM-DD | Initial team design | Project start |
+| YYYY-MM-DD | Initial roster | Project start |
 | YYYY-MM-DD | [Changed X to Y] | [Why — model upgrade, cost, capability gap] |
