@@ -5,8 +5,12 @@
 C² is a free, open build method that turns AI coding agents into genuine
 development partners — for builders at any level.
 
-C² runs the same shape at any size — one person with one agent, or a team
-running many apps. The roles are roles, not headcount: solo, you play them all.
+**New in this release: [`fleet/`](fleet/)** — run a repo with a fleet of agents, one per PRD, each
+in its own worktree, with a lead that merges and a reviewer that checks every PR in a fresh
+context. It ships with [`fleet/RULES.md`](fleet/RULES.md): 9 rules, each written after a real
+failure on a real build, with the story attached. Start at
+[`fleet/ADOPTING.md`](fleet/ADOPTING.md). Two repos, 12 merged PRs so far — experimental, and
+honest about what is still unproven.
 
 Not a theory. Built and battle-tested over two years and 1,000+ agent sessions
 shipping production software — SaaS platforms, websites, AI agents, and
@@ -23,7 +27,7 @@ than a week has felt it: **the agent has no memory between sessions.** It
 re-learns your project every time, repeats mistakes it already made, and
 improvises where it should follow.
 
-Context is ephemeral. Code is permanent. Most builders pour effort into the code
+Context is ephemeral. Code is permanent. Most teams pour effort into the code
 and let the context evaporate — so the agent never gets smarter, and the work
 never compounds.
 

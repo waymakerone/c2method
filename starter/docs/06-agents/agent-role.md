@@ -14,9 +14,6 @@ tags: [agent, specialist]
 > **Role:** [Lead executor / Bench reviewer / Specialist — what this agent does in one sentence]  
 > **Invoke when:** [Specific trigger — "a PR is ready for QA", "architecture decision needs review", etc.]  
 > **Never:** [Hard limit on what this agent must never do]
->
-> A role is a role, not headcount. Write one of these only when a repeatable job
-> earns its own definition — solo with one agent, you may never need one.
 
 ---
 

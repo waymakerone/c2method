@@ -1,0 +1,41 @@
+# .fleet/fleet.config — one per repo, committed. Plain KEY=value, sourced by bash.
+# Every value below is the kit default; override only what you need.
+
+INSTANCE_NAME=""              # blank = the repo folder name
+NAME_PREFIX=""                # lane names become <prefix>-<prd>; blank = INSTANCE_NAME
+WORKTREE_ROOT=""              # blank = <repo>/.claude/worktrees
+BASE_BRANCH="main"            # lanes branch from here and PRs target it
+
+LANE_CEILING=3                # how many lanes fly at once. `fleet scale <n>` overrides at runtime
+STAGGER_SEC=20                # gap between spawns, so lanes never all start at once
+MAX_RESPAWNS=3                # a lane that dies this many times is marked failed for the pilot
+STARTING_TIMEOUT_MIN=5        # a lane that hasn't reported ready by then is restarted
+HEARTBEAT_TIMEOUT_MIN=20      # an idle lane silent this long gets nudged
+DEMOTE_AFTER_DAYS=5           # no merged PR in this window → the lane is landed cold
+LOOP_LIMIT=3                  # gap passes with nothing closable before a lane lands itself
+LANE_PRS_PER_DAY=6            # soft turn budget: a lane stops opening PRs past this and reports
+
+MODEL_TOWER="opus"            # repo-ops: coordination, merges, hard calls
+MODEL_CHECKPOINT="fable"      # pr-review: fresh-context review
+MODEL_LANE="sonnet"           # default for lanes; lanes.json can override per lane
+PERMISSION_MODE="bypassPermissions"   # claude runner only
+
+# Not using Claude Code? Point the fleet at your agent's CLI instead (see fleet/README.md):
+# FLEET_RUNNER="exec"
+# AGENT_CMD='codex exec --model {model} --cd {cwd} "$(cat {prompt_file})"' 
+RECONCILE_INTERVAL_MIN=2      # how often the tower runs `fleet reconcile`
+IDLE_BACKOFF_TICKS=3          # after this many no-change ticks, the tower and checkpoint
+                              # stretch their interval (15m → 30m → hourly). A fleet that is
+                              # only waiting on the pilot should cost almost nothing.
+
+NEVER_TOUCH=""                # space-separated paths no lane may write, whatever its surfaces
+                              # say — the repo's dangerous edges. Carried into every brief.
+                              # e.g. NEVER_TOUCH="supabase/functions/** **/migrations/** .github/**"
+DRAFT_PRS=false               # true: lanes open PRs as DRAFTS. GitHub refuses to merge a draft,
+                              # so nothing else in the repo — another agent, a PR-watcher loop,
+                              # an automation — can merge fleet work, whatever it decides. The
+                              # pilot marks ready and merges. Use it wherever something else
+                              # merges PRs, and on any repo where a merge deploys.
+MERGE_REQUIRES_PILOT=false    # true: the tower never merges — it lists approved PRs on the
+                              # radar and you merge. Start here on any repo where a merge
+                              # deploys, and turn it off once you trust the loop.

@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+# fleet — run a C² repo with a fleet of PRD-owning agents.
+# PRD: docs/01-planning/product-requirements/fleet-prd.md · README: fleet/README.md
+set -euo pipefail
+
+_self="${BASH_SOURCE[0]}"
+while [ -L "$_self" ]; do
+  _link="$(readlink "$_self")"
+  case "$_link" in /*) _self="$_link" ;; *) _self="$(dirname "$_self")/$_link" ;; esac
+done
+FLEET_KIT="$(cd "$(dirname "$_self")/.." && pwd)"
+
+for _f in common roster lanes reconcile commands; do
+  # shellcheck disable=SC1090
+  . "$FLEET_KIT/lib/$_f.sh"
+done
+_runner="${FLEET_RUNNER:-claude}"
+[ -f "$FLEET_KIT/lib/runner-$_runner.sh" ] || die "unknown runner '$_runner'"
+# shellcheck disable=SC1090
+. "$FLEET_KIT/lib/runner-$_runner.sh"
+
+usage() { cat <<'EOF'
+fleet — run a C² repo with a fleet of PRD-owning agents
+
+  fleet preflight                 check the machine and repo before anything flies
+  fleet launch                    tower + checkpoint + one lane per enlisted PRD, up to the ceiling
+  fleet radar                     the live board, ending with what's waiting on you
+  fleet enlist <prd.md> --files 'glob,…' [--data …] [--external …] [--priority n] [--model m] [--after prd]
+                                  add a PRD to the fleet
+  fleet scale <n>                 set how many lanes fly at once
+  fleet land <prd> [--retire]     land one lane safely (--retire also removes it from lanes.json)
+  fleet ground [--now]            land everything safely (--now: stop every session immediately)
+
+  fleet cockpit <prd>             open a lane's terminal
+  fleet tower                     open the tower's terminal
+  fleet hail <prd|all|tower|checkpoint> "msg"
+                                  message a lane (inbox; /fleet hail also pushes it live)
+  fleet wake <prd>                fly a landed or failed lane again
+  fleet blackbox [prd] [n]        the decision log
+  fleet deck                      wire every flying lane into your IDE as its own terminal
+
+  fleet init                      set up .fleet/ in this repo
+  fleet reconcile                 one pass of the tower's control loop
+  fleet brief <prd>               print a lane's launch prompt
+  fleet beat <prd> <status> [--seen <ver>] [--merged]
+                                  a lane's heartbeat into its own state file
+  fleet log "<what happened>"     one line in the decisions log, as the calling agent
+  fleet decide "<what you ruled>" record a pilot decision agents can verify for themselves
+EOF
+}
+
+cmd="${1:-help}"; [ $# -gt 0 ] && shift
+need jq
+case "$cmd" in
+  help|-h|--help) usage ;;
+  init) cmd_init "$@" ;;
+  preflight|launch|radar|enlist|scale|land|ground|cockpit|tower|hail|wake|blackbox|deck|decide|reconcile|brief|beat|log)
+    load_config
+    "cmd_$cmd" "$@" ;;
+  *) usage >&2; die "unknown command '$cmd'" ;;
+esac

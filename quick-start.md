@@ -3,8 +3,6 @@
 
 C² (C-Squared) can be set up on a new or existing project in half a day. This guide walks you through the steps in sequence. Don't skip the foundation — it's what makes everything else work.
 
-C² runs the same shape at any size — one person with one agent, or a team running many apps. The roles are roles, not headcount: solo, you play them all.
-
 **Time to minimal running state:** 2–3 hours  
 **Time to full implementation:** 1–2 weeks of active sessions
 
@@ -44,15 +42,15 @@ cage. Each folder is explained at [c2method.ai/docs](https://c2method.ai/docs).
 
 ---
 
-## Step 2 — Pick your agents (5 minutes)
+## Step 2 — Design your agent team (20 minutes)
 
-Decide which model plays which role. The default is one:
+Before writing a line of code, decide who's on the team. Open `docs/06-agents/agent-team.md` (already in your repo from Step 1) and fill in:
 
-- **Lead agent** — which AI coding agent runs the terminal sessions? (Claude Code, Grok CLI, Gemini CLI, Codex, etc.) Solo, this is the whole roster, and `docs/06-agents/agent-team.md` is one line.
-- **Bench agent** — add one when the risk earns it: independent review on PRDs, security, and architecture. Set budget caps when you add it, not before.
-- **Specialist agents** — add one only when a repeatable high-value job appears (QA scaffolding, release note authoring) and warrants a dedicated subagent definition.
+- **Lead agent** — which AI coding agent runs the terminal sessions? (Claude Code, Grok CLI, Gemini CLI, Codex, etc.)
+- **Bench agent(s)** — which agent(s) provide independent review on PRDs, security, and architecture? Set budget caps now, before you need them.
+- **Specialist agents** — any repeatable high-value tasks (QA scaffolding, release note authoring) that warrant a dedicated subagent definition?
 
-C² is agent-agnostic. You are not committing to a vendor — you are committing to roles, and roles are not headcount. A team spreads those roles across people and models; alone you play them all. Record what you're running and update it when it changes.
+C² is agent-agnostic. You are not committing to a vendor — you are committing to roles. Document the current team and update it when it changes.
 
 ---
 
@@ -126,7 +124,7 @@ Run your first C² session. At the end, fill in `docs/02-working/session-briefs/
 - Blockers encountered and how they were resolved
 - Key Discovery — **if this section has content, a `03-knowledge/` entry is required in this same commit**
 - Next session start state (what will the AI need to know at the start of next time?)
-- **Landing zone** — the believed delivery date and how far along the work is, so progress is visible without asking anyone — and without a stand-up, if you have one
+- **Landing zone** — the believed delivery date and how far along the work is, so progress is visible without a stand-up
 
 Commit the session brief to `docs/02-working/session-briefs/`.
 
@@ -148,7 +146,7 @@ After your first session, you have:
 - A Router (AGENTS.md / CLAUDE.md) that loads context automatically
 - A PRD hierarchy (Platform → Feature)
 - A Prompt Brief with scope and acceptance criteria
-- A Session Brief that serves as AI memory first — and as team communication, if there's a team
+- A Session Brief that serves as AI memory and team communication
 - Optionally: the first entry in your knowledge index
 
 The next session starts from the Session Brief. The one after that builds on the knowledge index. After 20 sessions, the contextbase is denser than the codebase in terms of decision context.

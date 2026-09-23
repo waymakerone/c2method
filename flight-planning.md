@@ -9,14 +9,9 @@
 
 ## The one-line definition
 
-**Flight Planning is the session where a pilot files their plan before they build** — with the
-team, or with themselves as the gate when they build alone. PRD line drawn, Prompt Briefs built,
-the journey mapped — reviewed out loud, before a single autonomous session burns.
-
-One ceremony at two weights, not an enterprise ritual with a solo footnote. It holds for a solo
-operator with no product function, for an agency, for an MSP, and for a fifty-person team: with
-a crew it is a room; alone it is the review where you check the plan says what you actually
-want built.
+**Flight Planning is the session where a pilot files their plan with the team before they
+build.** PRD line drawn, Prompt Briefs built, the journey mapped — reviewed out loud,
+before a single autonomous session burns.
 
 It is the C² equivalent of a pilot briefing air traffic control before takeoff:
 *this is where I'm going, this is what I'll build, these are the milestones along the way,
