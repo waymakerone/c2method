@@ -49,6 +49,10 @@ load_config() {
   : "${WORKTREE_ROOT:=$REPO_PATH/.claude/worktrees}"
   [ -n "${FLEET_STAGGER_SEC:-}" ] && STAGGER_SEC="$FLEET_STAGGER_SEC"
   RT="${FLEET_HOME:-$HOME/.fleet}/$INSTANCE_NAME"
+  # Skills live beside the kit (repo root), so the whole thing is one plugin.
+  SKILLS_DIR="$FLEET_KIT/../skills"
+  [ -d "$SKILLS_DIR" ] || SKILLS_DIR="$FLEET_KIT/skills"
+  SKILLS_DIR="$(cd "$SKILLS_DIR" && pwd)"
   # Agents may not inherit our environment, so briefs spell out the exact CLI call.
   FLEET_CMD="$FLEET_KIT/bin/fleet"
   [ -n "${FLEET_HOME:-}" ] && FLEET_CMD="FLEET_HOME='$FLEET_HOME' $FLEET_CMD"

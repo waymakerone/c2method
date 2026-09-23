@@ -8,6 +8,7 @@ two places people get stuck.
 ```bash
 # from wherever you cloned the C² kit
 ln -s "$PWD/fleet/bin/fleet" ~/.local/bin/fleet
+claude --plugin-dir "$PWD"      # /fleet plus every C² skill, in any session
 ```
 
 Claude Code ≥ 2.1.278 (or any agent CLI — see the README's runner section), plus `git`, `jq`

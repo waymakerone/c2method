@@ -22,7 +22,7 @@ Code](#using-an-agent-other-than-claude-code). No tmux.
 
 ```bash
 ln -s "$PWD/fleet/bin/fleet" ~/.local/bin/fleet              # the CLI
-claude --plugin-dir "$PWD/fleet"                             # /fleet + the five skills in a session
+claude --plugin-dir "$PWD"                                   # /fleet + every C² skill in a session
 ```
 
 ## Fly
@@ -74,16 +74,20 @@ Idle agents only wake on a message.
 
 ## Kit layout
 
+The skills and the `/fleet` command live at the **repo root**, not in here, so the whole kit is
+one plugin with one skills directory:
+
 ```
+../skills/       c2-fleet (the pilot's agent) · c2-fleet-protocol (lanes) · c2-repo-ops (tower)
+                 c2-pr-review (checkpoint) · c2-gardener · flight-plan (the method skill)
+../commands/     fleet.md — the /fleet slash command
+
 fleet/
 ├── bin/fleet                  dispatcher
 ├── lib/                       common, roster (single writer), lanes, reconcile, commands
 │   ├── runner-claude.sh       Claude Code background sessions (strips CLAUDE* env; see gotchas)
 │   ├── runner-exec.sh         any other agent CLI (Codex, Gemini, Grok, …) via AGENT_CMD
 │   └── runner-fake.sh         no-token runner for the tests
-├── skills/                    c2-fleet (the pilot's agent) · c2-fleet-protocol (lanes)
-│                              c2-repo-ops (tower) · c2-pr-review (checkpoint) · c2-gardener
-├── commands/fleet.md          the /fleet slash command
 ├── templates/                 fleet.config.example
 └── test/                      acceptance.sh (fake runner) · runner-exec.sh
 ```

@@ -1,8 +1,9 @@
 ---
 name: flight-plan
 description: >-
-  Prepare a C² flight plan from a Feature PRD before any build session. Use when a pilot is
-  about to start work against a PRD and needs to file a plan for the team to review — it sweeps
+  Prepare a C² flight plan from a Feature PRD before any build session. Works at any size — use
+  when a pilot is about to start work against a PRD and needs to file a plan for review, whether
+  that review is a team or the solo builder acting as their own gate — it sweeps
   the previous cycle, draws the scope line, interrogates the spec, drafts the Prompt Briefs, plots
   the journey, draws the shape of the work, and emits a filed flight plan. It stops at *filed*; it
   never starts building. Trigger phrases: "file a flight plan for <PRD>", "prep a flight plan",
@@ -11,10 +12,16 @@ description: >-
 
 # flight-plan
 
-You prepare a **flight plan** for a pilot to file with their team before a build session, in
-the C² Method. A pilot files a plan before takeoff the way a pilot briefs air traffic control:
-*this is where I'm going, this is what I'll build, the milestones along the way, and where I
-believe I'll land and at what time.* Your job is to get that plan ready to review.
+You prepare a **flight plan** for a pilot to file before a build session, in the C² Method. A
+pilot files a plan before takeoff the way a pilot briefs air traffic control: *this is where I'm
+going, this is what I'll build, the milestones along the way, and where I believe I'll land and
+at what time.* Your job is to get that plan ready to review.
+
+The plan is filed with the team — or with the pilot themselves as the gate, when they build
+alone. The ceremony scales, it does not toggle: same five parts, same filed-before-takeoff rule,
+whether the reviewer is six people in a room or one builder reading their own plan back. Solo,
+"surface it to the pilot" means put the decision in front of them as a decision, not a fact. The
+gate is the point — do not skip it because there is nobody else to file with.
 
 **Hard limit:** you stop at *filed*. You sweep the last cycle, draw the line, draft the briefs,
 plot the journey, draw the shape, and emit the plan. You do **not** start building, run an

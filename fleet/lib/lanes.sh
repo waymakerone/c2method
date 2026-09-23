@@ -62,8 +62,8 @@ EOF
 _brief_role() { cat <<EOF
 You are $1, $3, in the C² fleet for $REPO_PATH.
 Your worktree: $2 (branch fleet/$1).
-Before anything else, read and follow $FLEET_KIT/skills/$4/SKILL.md. It is your rulebook.
-Also read $FLEET_KIT/skills/c2-fleet-protocol/SKILL.md so you know what the lanes follow.
+Before anything else, read and follow $SKILLS_DIR/$4/SKILL.md. It is your rulebook.
+Also read $SKILLS_DIR/c2-fleet-protocol/SKILL.md so you know what the lanes follow.
 
 $(_brief_common "$1")
 Models: tower $MODEL_TOWER · checkpoint $MODEL_CHECKPOINT · lanes $MODEL_LANE.
@@ -81,7 +81,7 @@ _brief_lane() {
   cat <<EOF
 You are the fleet lane $name. You own PRD '$prd' ($path, version $ver) in $REPO_PATH.
 Your worktree: $wt (branch fleet/$name). Work only there.
-Before anything else, read and follow $FLEET_KIT/skills/c2-fleet-protocol/SKILL.md. It is your rulebook.
+Before anything else, read and follow $SKILLS_DIR/c2-fleet-protocol/SKILL.md. It is your rulebook.
 
 Your state file (you are its only writer): $RT/state/$prd.json
 Your surfaces. Change nothing outside them without the tower's say-so:

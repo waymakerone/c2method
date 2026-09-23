@@ -52,14 +52,14 @@ fleet deck                   # open every lane as a terminal in your IDE
 
 A PRD joins the fleet when it has \`prd_id:\`, \`version:\` and acceptance items that name their
 anchors. Bump a PRD's \`version:\` and its lane re-plans against the new spec. Scope, merging
-and the ceiling are the pilot's, never an agent's. Full rulebooks: \`$FLEET_KIT/skills/\`.
+and the ceiling are the pilot's, never an agent's. Full rulebooks: \`$SKILLS_DIR/\`.
 EOF
     say "added a fleet section to $f"
   done
 }
 
 cmd_preflight() {
-  local fails=0 v prd out
+  local fails=0 v prd out others o
   ok()  { printf '  ✓ %s\n' "$*"; }
   bad() { printf '  ✗ %s\n' "$*"; fails=$((fails + 1)); }
   say "fleet preflight · $REPO_PATH"
@@ -88,12 +88,20 @@ cmd_preflight() {
   [ -w "$RT" ] && ok "runtime $RT writable" || bad "runtime $RT not writable"
   jq -e '.lanes | type == "array"' "$LANES_FILE" >/dev/null && ok "lanes.json valid" || bad "lanes.json invalid"
   for f in c2-fleet-protocol c2-repo-ops c2-pr-review; do
-    [ -f "$FLEET_KIT/skills/$f/SKILL.md" ] || bad "skill $f missing from the kit"
+    [ -f "$SKILLS_DIR/$f/SKILL.md" ] || bad "skill $f missing from the kit"
   done
   for prd in $(lanes_active); do
     if out="$(validate_lane "$prd")"; then ok "lane $prd: PRD valid"; else bad "lane $prd:"; say "$out"; fi
-    if ! out="$(find_overlaps "$prd" $(lanes_active | grep -vx "$(lane_field "$prd" after)" || true))"; then
-      bad "lane $prd overlaps another lane (declare --after to sequence them):"; say "$out"
+    # A lane sequenced either way is not an overlap: check both directions.
+    others=""
+    for o in $(lanes_active); do
+      [ "$o" = "$prd" ] && continue
+      [ "$(lane_field "$prd" after)" = "$o" ] && continue
+      [ "$(lane_field "$o" after)" = "$prd" ] && continue
+      others="$others $o"
+    done
+    if ! out="$(find_overlaps "$prd" $others)"; then
+      bad "lane $prd overlaps a lane it is not sequenced with (use --after):"; say "$out"
     fi
   done
   if [ "${FLEET_RUNNER:-claude}" = claude ]; then
