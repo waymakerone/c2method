@@ -36,6 +36,17 @@ NEVER_TOUCH="..."             # the repo's dangerous edges: migrations, workflow
 lane touches something expensive. Ask the person who knows the repo best what would be costly
 even in an unmerged PR — that is the list.
 
+## Which PRDs can fly?
+
+```bash
+fleet candidates
+```
+
+It reads every PRD in the repo and sorts them into **ready to fly** (enlist these now) and **one
+conversation away** — the ones whose spec is worth flying but which lack the frontmatter and
+anchors. On a mature repo, expect most to be in the second list on day one. That is normal, and
+the list is the useful part: it is your backlog of "specs I thought were finished".
+
 ## Per PRD, before it can be a lane
 
 A PRD joins the fleet when it has three things:

@@ -40,6 +40,7 @@ fleet — run a C² repo with a fleet of PRD-owning agents
   fleet deck                      wire every flying lane into your IDE as its own terminal
 
   fleet init                      set up .fleet/ in this repo
+  fleet candidates                every PRD that could fly, and what each still needs
   fleet reconcile                 one pass of the tower's control loop
   fleet brief <prd>               print a lane's launch prompt
   fleet beat <prd> <status> [--seen <ver>] [--merged]
@@ -54,7 +55,7 @@ need jq
 case "$cmd" in
   help|-h|--help) usage ;;
   init) cmd_init "$@" ;;
-  preflight|launch|radar|enlist|scale|land|ground|cockpit|tower|hail|wake|blackbox|deck|decide|reconcile|brief|beat|log)
+  preflight|launch|radar|enlist|scale|land|ground|cockpit|tower|hail|wake|blackbox|deck|decide|candidates|reconcile|brief|beat|log)
     load_config
     "cmd_$cmd" "$@" ;;
   *) usage >&2; die "unknown command '$cmd'" ;;

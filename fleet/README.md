@@ -45,6 +45,7 @@ name their anchors.
 
 | Command | What it does |
 |---|---|
+| `fleet candidates` | Every PRD that could fly, and what each still needs |
 | `fleet preflight` | Checks the machine and repo. Changes nothing |
 | `fleet launch` | Tower + checkpoint + one lane per enlisted PRD, staggered, up to the ceiling |
 | `fleet radar` | Every lane's state, what it says, PRD version, items, PR, heartbeat, then **waiting on pilot** |

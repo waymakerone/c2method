@@ -18,12 +18,8 @@ cmd_init() {
   _init_router
   say "runtime: $RT"
   say ""
-  say "PRDs with a prd_id you can enlist:"
-  git -C "$REPO_PATH" ls-files '*.md' | while read -r f; do
-    [ -n "$(fm_get "$REPO_PATH/$f" prd_id)" ] && say "  fleet enlist $f --files '<glob>'"
-  done
-  say ""
-  say "Next: enlist PRDs, commit .fleet/, then 'fleet preflight' and 'fleet launch'."
+  cmd_candidates
+  say "Next: enlist the ones you want, commit .fleet/, then 'fleet preflight' and 'fleet launch'."
 }
 
 # Teach this repo's router that the fleet exists, so any agent reading it knows the verbs.
@@ -56,6 +52,68 @@ and the ceiling are the pilot's, never an agent's. Full rulebooks: \`$SKILLS_DIR
 EOF
     say "added a fleet section to $f"
   done
+}
+
+# Every PRD in the repo that could become a lane, and what each still needs.
+# A PRD is flyable when it has prd_id, version, and acceptance items naming an anchor.
+cmd_candidates() {
+  local f id ver anchor seen="" ready="" close="" cold=0 n
+  for f in $(git -C "$REPO_PATH" ls-files '*.md' | grep -iE 'prd|product-requirement|requirements/' ; git -C "$REPO_PATH" grep -l '^prd_id:' -- '*.md' 2>/dev/null); do
+    [ -f "$REPO_PATH/$f" ] || continue
+    case "$f" in *archive*|*superseded*|*completed*|*deprecated*|*retired*|*/README.md) continue ;; esac
+    case " $seen " in *" $f "*) continue ;; esac
+    seen="$seen $f"
+    id="$(fm_get "$REPO_PATH/$f" prd_id)"; ver="$(fm_get "$REPO_PATH/$f" version)"
+    anchor=""; grep -qiE '^[[:space:]]*\*?\*?anchor' "$REPO_PATH/$f" && anchor=1
+    if [ -n "$id" ] && [ -n "$ver" ] && [ -n "$anchor" ]; then
+      ready="$ready$id	$f
+"
+    elif [ -n "$anchor" ] || grep -qiE '^#+ .*(acceptance|success criteria|requirements)' "$REPO_PATH/$f"; then
+      close="$close$(basename "$f" .md)	$f	$([ -n "$id" ] || printf 'prd_id ')$([ -n "$ver" ] || printf 'version ')$([ -n "$anchor" ] && printf '' || printf 'anchors')
+"
+    else
+      cold=$((cold + 1))
+    fi
+  done
+
+  say "READY TO FLY"
+  if [ -n "$ready" ]; then
+    printf '%s' "$ready" | while IFS="$(printf '\t')" read -r id f; do
+      [ -n "$id" ] || continue
+      say "  ✓ $id"
+      say "      fleet enlist $f --files '<glob>' --priority <n>"
+    done
+  else
+    say "  none yet — see below"
+  fi
+
+  say ""
+  say "ONE CONVERSATION AWAY"
+  say "  These have a spec worth flying. They are missing only the frontmatter and anchors."
+  say ""
+  if [ -n "$close" ]; then
+    printf '%s' "$close" | head -12 | while IFS="$(printf '\t')" read -r name f missing; do
+      [ -n "$name" ] || continue
+      say "  · $name — needs: $missing"
+      say "      $f"
+    done
+    n="$(printf '%s' "$close" | grep -c . )"
+    [ "$n" -gt 12 ] && say "  … and $((n - 12)) more"
+    say ""
+    say "  Ask your agent, naming the ones you want:"
+    say ""
+    say "      \"Read <prd path> and draft the fleet frontmatter and acceptance anchors from"
+    say "       its own scope — prd_id, version, and one anchor per acceptance item that can"
+    say "       actually fail. Show me before you write anything.\""
+    say ""
+    say "  You approve the anchors. That conversation is where you find out whether the spec"
+    say "  was real — a PRD with no signal that can fail cannot be flown, and should not be."
+  else
+    say "  none"
+  fi
+
+  [ "$cold" -gt 0 ] && { say ""; say "$cold other markdown files look PRD-shaped but have no acceptance section at all."; }
+  return 0
 }
 
 cmd_preflight() {
