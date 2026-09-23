@@ -116,6 +116,9 @@ Then message the tower (`<prefix>-tower`): "plan filed". **Wait for `PLAN APPROV
 before building.** A plan that adds scope goes to the pilot, and the tower will tell you. Build
 only items inside the existing scope meanwhile.
 
+If your PRD's acceptance items name no anchor, that is a blocker for the pilot, not something
+you invent one for. Say which item has no testable signal and why, and work the items that do.
+
 If a gap pass finds nothing you can close, add 1 to `loop_passes`. At `LOOP_LIMIT`, land with a
 note saying why (step 8). Don't spin.
 

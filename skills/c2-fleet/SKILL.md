@@ -4,9 +4,10 @@ description: >-
   Fly a C² fleet as the pilot's agent: launch it, read the radar, enlist a PRD, scale it, message
   a lane, wake a landed lane, land one, ground the fleet, and know which decisions are the
   pilot's alone. Use whenever someone asks to start, check, steer or stop a fleet of agents on a
-  repo, or asks what their lanes are doing. Trigger phrases: "start the fleet", "launch the
-  fleet", "what are my lanes doing", "fleet status", "add this PRD to the fleet", "stop the
-  fleet".
+  repo, or asks what their lanes are doing — including "which PRDs can go in the fleet", "what
+  can I put in a fleet", "who's in my fleet". Trigger phrases: "start the fleet", "launch the
+  fleet", "what are my lanes doing", "fleet status", "add this PRD to the fleet", "which PRDs
+  are ready", "stop the fleet".
 ---
 
 # c2-fleet: flying the fleet
@@ -24,6 +25,7 @@ and the design is in the repo's fleet PRD.
 ## The verbs, in the order you'll need them
 
 ```bash
+fleet candidates                 # which PRDs can fly, and what the rest still need
 fleet preflight                  # before anything flies. Changes nothing
 fleet launch                     # tower + checkpoint + one lane per enlisted PRD
 fleet radar                      # the board, ending with WAITING ON PILOT
@@ -57,6 +59,27 @@ board exists. Each line is one of:
   the pilot's call, every time.
 - **An escalation from the tower**, including "PR #n is ready for you to merge" when
   `MERGE_REQUIRES_PILOT` is on.
+
+## "What can I put in a fleet?"
+
+Run `fleet candidates`. It sorts every PRD in the repo into **ready to fly** and **one
+conversation away**, and names what each is missing. Show the pilot both lists — the second one
+is the valuable half, because it is their backlog of specs they believed were finished.
+
+**Then offer to close the gap, and do it properly.** When they name a PRD, read it, draft the
+frontmatter (`prd_id`, `version`) and an acceptance section where **every item names an anchor**
+— the signal that decides done and that can actually fail — derived from the PRD's own stated
+scope. **Show the pilot before writing anything**, because acceptance items are scope, and scope
+is theirs.
+
+Two things to say plainly while you do it:
+
+- **A PRD with no signal that can fail cannot be flown, and should not be.** If you cannot find
+  an anchor for an item, say so rather than inventing a weak one. "The page renders" is not an
+  anchor; "`npm test -- quote-pdf` passes" is.
+- **Held items are fine.** If part of a PRD needs a decision or infrastructure the pilot has not
+  provided, put it in a "held, not this cycle" list with the reason. A lane will then block on it
+  honestly instead of building something that posts nowhere.
 
 ## Enlisting a PRD
 

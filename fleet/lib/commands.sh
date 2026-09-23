@@ -38,6 +38,7 @@ This repo can be run by a **C² fleet**: a tower (repo-ops), a checkpoint (pr-re
 lane per PRD, each in its own worktree. Config in \`.fleet/\`; live state in \`$RT\`.
 
 \`\`\`bash
+fleet candidates             # which PRDs can fly, and what the rest still need
 fleet radar                  # the board, ending with what is waiting on the pilot
 fleet launch | ground        # start everything | land everything safely
 fleet enlist <prd.md> --files 'glob,…'
