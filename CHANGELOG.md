@@ -5,6 +5,25 @@ this file says where C² is *now*, built on its history rather than restarting f
 
 ---
 
+## v1.4.1 — the fix (2026-09-25)
+
+Three bugs in the fleet kit, all found by running it rather than reading it:
+
+- **Twin lanes.** `claude --bg` colours the session id when run from inside a session, so the
+  stored id never matched the plain one the API returns. A live lane looked lost, and reconcile
+  spawned a second. Deterministic, not flaky.
+- **Blind liveness.** The liveness check answered "nothing is running" when it meant "I could not
+  look" — one transient failure would have respawned an entire fleet. It now fails closed.
+- **A red suite nobody saw.** On macOS the tests were 13 of 38 under the default `TMPDIR`, since
+  `git rev-parse` returns `/private/var/…` while `pwd` returns `/var/…`. They had always been run
+  with a pre-resolved path, so the green was an artefact of one shell.
+
+Also: `fleet preflight` now checks workspace trust, which Claude Code 2.1.282 requires before
+`--bg` will start anything; a spawn the environment refuses no longer spends a lane's respawn
+budget; and `fleet land tower|checkpoint` works, so a role can be restarted to pick up config.
+
+52 acceptance checks, 7 exec-runner checks, each new one mutation-checked.
+
 ## v1.4 — the fleet (2026-09-23)
 
 **A repo can now be run by a fleet of agents.** One agent per PRD, each in its own worktree, a

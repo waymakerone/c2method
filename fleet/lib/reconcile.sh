@@ -12,17 +12,20 @@ _older_than_min() { # iso minutes
 _flying() { roster_lanes_in lane "starting,running,landing"; }
 
 # A lane's report counts only if it was written after this incarnation started, so a woken
-# lane isn't stopped by the "landed" it wrote last time.
+# lane isn't stopped by the "landed" it wrote last time. Both stamps are whole seconds, so a
+# "landed" must be strictly after: a lane woken in the second it landed would otherwise re-land
+# and re-wake on every pass. Any other report may share the start second.
 _fresh() { # name prd
   local hb st; hb="$(iso_to_epoch "$(state_get "$2" heartbeat)")"; st="$(iso_to_epoch "$(roster_get "$1" started)")"
-  [ "$hb" -ge "$st" ]
+  if [ "$(state_get "$2" lane_status)" = landed ]; then [ "$hb" -gt "$st" ]; else [ "$hb" -ge "$st" ]; fi
 }
 
 reconcile() {
   local live launched=0 name prd rstate id lstatus status hold after ver seen hb last flying
   local queue='[]' spawned=0 n who why
   ROSTER_CHANGES=0
-  live="$(runner_list)"
+  # Reconciling blind would call every lane lost and respawn the lot. Stop instead.
+  live="$(runner_list)" || die "cannot list live sessions — reconcile skipped, nothing changed"
   [ -f "$RT/launched" ] && launched=1
 
   # 1. Match the roster to reality: anything we think is up but isn't live.

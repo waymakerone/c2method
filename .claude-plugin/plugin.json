@@ -1,6 +1,6 @@
 {
   "name": "c2-fleet",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Run a C² repo with a fleet of PRD-owning agents: a tower (repo-ops), a checkpoint (pr-review) and one lane per PRD.",
   "license": "CC-BY-NC-SA-4.0"
 }

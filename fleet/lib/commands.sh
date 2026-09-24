@@ -134,6 +134,19 @@ cmd_preflight() {
   fi
   if command -v gh >/dev/null && gh auth status >/dev/null 2>&1; then ok "gh authenticated"
   else bad "gh missing or not logged in (the tower merges through it)"; fi
+  if [ "${FLEET_RUNNER:-claude}" = claude ] && [ -f "$HOME/.claude.json" ]; then
+    local untrusted="" d
+    for d in "$REPO_PATH" "$WORKTREE_ROOT"; do
+      [ -d "$d" ] || continue
+      jq -e --arg d "$d" '(.projects[$d].hasTrustDialogAccepted // false) == true' "$HOME/.claude.json" >/dev/null 2>&1 \
+        || untrusted="$untrusted $d"
+    done
+    if [ -z "$untrusted" ]; then ok "workspace trusted"
+    else
+      bad "workspace not trusted — every spawn will fail. Run this once in each and accept:"
+      for d in $untrusted; do say "      (cd $d && claude)"; done
+    fi
+  fi
   if command -v gh >/dev/null && gh auth status >/dev/null 2>&1; then
     local labels; labels="$(cd "$REPO_PATH" && gh label list --limit 200 --json name -q '.[].name' 2>/dev/null || true)"
     if printf '%s\n' "$labels" | grep -qx fleet:review && printf '%s\n' "$labels" | grep -qx fleet:approved \
@@ -186,7 +199,7 @@ cmd_launch() {
 
 cmd_radar() {
   local live name prd rstate id lstatus ver seen items pr hb model flying n waiting=""
-  live="$(runner_list)"
+  live="$(runner_list)" || { warn "cannot list live sessions — liveness below is unknown"; live='[]'; }
   flying="$(roster_lanes_in lane "starting,running,landing" | wc -l | tr -d ' ')"
   printf 'FLEET %s · %s/%s lanes flying · tower %s · checkpoint %s%s\n' "$INSTANCE_NAME" "$flying" "$LANE_CEILING" \
     "$(_role_mark tower "$live")" "$(_role_mark checkpoint "$live")" "$([ -f "$RT/launched" ] || echo ' · GROUNDED')"
@@ -237,7 +250,7 @@ cmd_enlist() {
   done
   [ -n "$path" ] || die "usage: fleet enlist <prd.md> --files 'glob,glob' [--data ..] [--external ..] [--priority n] [--model m] [--after prd]"
   [ -f "$path" ] || [ -f "$REPO_PATH/$path" ] || die "no such PRD file: $path"
-  [ -f "$path" ] && path="$(cd "$(dirname "$path")" && pwd)/$(basename "$path")" || path="$REPO_PATH/$path"
+  [ -f "$path" ] && path="$(cd "$(dirname "$path")" && pwd -P)/$(basename "$path")" || path="$REPO_PATH/$path"
   path="${path#"$REPO_PATH"/}"
   prd="$(fm_get "$REPO_PATH/$path" prd_id)"
   [ -n "$prd" ] || die "$path has no prd_id: in its frontmatter"
@@ -286,7 +299,10 @@ cmd_land() {
   local prd="${1:-}" retire=0 name id live status wt
   [ "${2:-}" = --retire ] && retire=1
   [ -n "$prd" ] || die "usage: fleet land <prd> [--retire]"
-  lane_enlisted "$prd" || die "no enlisted lane '$prd'"
+  # tower and checkpoint land too, so a role can be restarted (land, then wake) to pick up a change
+  if [ "$prd" = tower ] || [ "$prd" = checkpoint ]; then
+    [ $retire = 0 ] || die "the $prd is a role, not a lane: it cannot be retired"
+  else lane_enlisted "$prd" || die "no enlisted lane '$prd'"; fi
   name="$(lane_name "$prd")"
   _land_one "$name" pilot
   if [ $retire = 1 ]; then
@@ -298,7 +314,8 @@ cmd_land() {
 
 _land_one() { # name hold
   local name="$1" id live status wt
-  id="$(roster_get "$name" id)"; live="$(runner_list)"; wt="$(roster_get "$name" worktree)"
+  id="$(roster_get "$name" id)"; wt="$(roster_get "$name" worktree)"
+  live="$(runner_list)" || die "cannot list live sessions — not landing $name blind"
   if ! status="$(live_status "$live" "$id")"; then
     roster_has "$name" && roster_set "$name" state=landed hold="$2" id=null
     say "  $name is not flying. Marked landed"; return 0

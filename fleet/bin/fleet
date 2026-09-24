@@ -28,7 +28,7 @@ fleet — run a C² repo with a fleet of PRD-owning agents
   fleet enlist <prd.md> --files 'glob,…' [--data …] [--external …] [--priority n] [--model m] [--after prd]
                                   add a PRD to the fleet
   fleet scale <n>                 set how many lanes fly at once
-  fleet land <prd> [--retire]     land one lane safely (--retire also removes it from lanes.json)
+  fleet land <prd|tower|checkpoint> [--retire]  land one safely (--retire removes a lane from lanes.json)
   fleet ground [--now]            land everything safely (--now: stop every session immediately)
 
   fleet cockpit <prd>             open a lane's terminal

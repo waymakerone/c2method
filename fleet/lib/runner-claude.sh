@@ -19,16 +19,20 @@ runner_spawn() {
   local out id
   out="$(cd "$2" && _claude --bg -n "$1" --model "$3" --permission-mode "$PERMISSION_MODE" "$4" </dev/null 2>&1)" || {
     printf '%s\n' "$out" >&2; return 1; }
-  id="$(printf '%s\n' "$out" | awk '$1 == "backgrounded" { print $3; exit }')"
-  [ -n "$id" ] || { printf '%s\n' "$out" >&2; return 1; }
+  # From inside a session (the tower) `claude --bg` colours the id. Stored coloured, it never
+  # matches `claude agents --json`, so the next reconcile calls a live lane lost and spawns a twin.
+  id="$(printf '%s\n' "$out" | strip_ansi | awk '$1 == "backgrounded" { print $3; exit }')"
+  case "$id" in ''|*[!0-9a-f]*) printf '%s\n' "$out" >&2; return 1 ;; esac
   echo "$id"
 }
 
 # runner_list → JSON array of live sessions: [{name, id, pid, status, state, cwd}]
+# Fails when it cannot see. It never answers '[]' for "I couldn't look": to reconcile, an empty
+# list means every lane died, and it would respawn all of them.
 runner_list() {
-  _claude agents --json </dev/null 2>/dev/null \
-    | jq -c '[.[] | select(.kind == "background") | {name, id, pid, status, state, cwd}]' 2>/dev/null \
-    || echo '[]'
+  local out
+  out="$(_claude agents --json </dev/null 2>/dev/null)" || return 1
+  printf '%s' "$out" | jq -c '[.[] | select(.kind == "background") | {name, id, pid, status, state, cwd}]' 2>/dev/null
 }
 
 runner_stop()   { _claude kill "$1" </dev/null >/dev/null 2>&1 || true; }

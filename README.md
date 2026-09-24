@@ -5,7 +5,7 @@
 C² is a free, open build method that turns AI coding agents into genuine
 development partners — for builders at any level.
 
-**C² v1.4** · fleet kit `0.2.0` (experimental) · [CHANGELOG](CHANGELOG.md)
+**C² v1.4.1** · fleet kit `0.2.1` (experimental) · [CHANGELOG](CHANGELOG.md)
 
 **New in this release: [`fleet/`](fleet/)** — run a repo with a fleet of agents, one per PRD, each
 in its own worktree, with a lead that merges and a reviewer that checks every PR in a fresh

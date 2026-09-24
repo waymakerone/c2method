@@ -5,6 +5,9 @@
 die()  { printf 'fleet: %s\n' "$*" >&2; exit 1; }
 warn() { printf 'fleet: warning: %s\n' "$*" >&2; }
 say()  { printf '%s\n' "$*"; }
+# Remove terminal colour codes. An agent CLI run from inside another session can colour what it
+# prints, and a coloured session id never matches the live list (gotcha: coloured-session-id).
+strip_ansi() { sed $'s/\033\\[[0-9;]*m//g'; }
 now()  { date -u +%Y-%m-%dT%H:%M:%SZ; }
 epoch() { date -u +%s; }
 
@@ -32,7 +35,7 @@ find_repo() {
   top="$(git rev-parse --show-toplevel 2>/dev/null)" || return 1
   common="$(git -C "$top" rev-parse --git-common-dir)"
   case "$common" in /*) ;; *) common="$top/$common" ;; esac
-  (cd "$common/.." && pwd)
+  (cd "$common/.." && pwd -P)
 }
 
 # Load kit defaults, then .fleet/fleet.config, then runtime overrides.

@@ -113,13 +113,19 @@ spawn_one() {
   roster_set "$name" role="$role" prd="$who" state=starting worktree="$wt" branch="fleet/$name" \
     model="$model" started="$(now)" respawns="${respawns:-0}" id=null
   if id="$(runner_spawn "$name" "$wt" "$model" "$(brief_for "$who")")"; then
+    id="$(printf '%s' "$id" | strip_ansi)"
     roster_set "$name" id="$id"
     decide "spawn $name model=$model id=$id"
     say "  ↑ $name ($model) id $id"
   else
-    roster_set "$name" state=failed
-    decide "spawn-failed $name"
-    say "  ✗ $name failed to spawn" >&2
+    # The environment refused us — an untrusted workspace, a missing CLI, no auth. That is not
+    # the lane misbehaving, so it must not spend the respawn budget: the pilot fixes the
+    # environment and the next reconcile brings the lane up without a `fleet wake` each.
+    local refund="${respawns:-0}"
+    [ "$refund" -gt 0 ] && refund=$((refund - 1))
+    roster_set "$name" state=down respawns="$refund"
+    decide "spawn-failed $name (environment — respawn budget not spent)"
+    say "  ✗ $name could not spawn. Fix the environment, then 'fleet reconcile'" >&2
     return 1
   fi
 }

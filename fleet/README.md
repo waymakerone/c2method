@@ -132,6 +132,6 @@ be pointed at; only the Claude runner loads them as installed skills.
 ## Test
 
 ```bash
-fleet/test/acceptance.sh        # 38 checks on a fake runner, no tokens
+fleet/test/acceptance.sh        # 48 checks on a fake runner, no tokens
 fleet/test/runner-exec.sh       # the exec runner against a stand-in agent
 ```
