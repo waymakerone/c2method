@@ -9,7 +9,10 @@ _older_than_min() { # iso minutes
   [ "$t" -gt 0 ] && [ $(( $(epoch) - t )) -gt $(( $2 * 60 )) ]
 }
 
-_flying() { roster_lanes_in lane "starting,running,landing"; }
+# Failed lanes hold their slot: a lane the pilot has not dealt with should not be quietly
+# overtaken by a lower-priority one, which is how a fleet ends up flying the wrong work.
+_flying() { roster_lanes_in lane "starting,running,landing,failed"; }
+_live()   { roster_lanes_in lane "starting,running,landing"; }
 
 # A lane's report counts only if it was written after this incarnation started, so a woken
 # lane isn't stopped by the "landed" it wrote last time. Both stamps are whole seconds, so a
@@ -103,7 +106,7 @@ reconcile() {
         queue="$(printf '%s' "$queue" | jq -c --arg p "$prd" --arg r "after $after" '. + [{prd: $p, reason: $r}]')"
         _mark_queued "$name" "$prd"; continue
       fi
-      if find_overlaps "$prd" $(for n in $(_flying); do roster_get "$n" prd; done) >/dev/null; then :; else
+      if find_overlaps "$prd" $(for n in $(_live); do roster_get "$n" prd; done) >/dev/null; then :; else
         queue="$(printf '%s' "$queue" | jq -c --arg p "$prd" '. + [{prd: $p, reason: "surface overlap"}]')"
         _mark_queued "$name" "$prd"; continue
       fi

@@ -29,13 +29,23 @@ ago() {
 
 need() { command -v "$1" >/dev/null 2>&1 || die "$1 is required but not installed"; }
 
-# Find the main checkout even when called from inside a lane's worktree.
+# Resolve the repo this command is about.
+#
+# A lane calling the CLI from its own worktree means the instance's main checkout — that is how
+# a lane reads the roster and its own PRD. Anyone else means the checkout they are standing in:
+# a pilot preparing an enlist on a branch, in a worktree of their own, is talking about THAT
+# branch, and silently retargeting them at main reads the wrong PRD and writes the wrong file.
 find_repo() {
-  local top common
+  local top common main wt
   top="$(git rev-parse --show-toplevel 2>/dev/null)" || return 1
+  top="$(cd "$top" && pwd -P)"
   common="$(git -C "$top" rev-parse --git-common-dir)"
   case "$common" in /*) ;; *) common="$top/$common" ;; esac
-  (cd "$common/.." && pwd -P)
+  main="$(cd "$common/.." && pwd -P)"
+  [ "$top" = "$main" ] && { echo "$main"; return 0; }
+  # A fleet worktree lives under the instance's WORKTREE_ROOT. Only those resolve to main.
+  wt="$(. "$main/.fleet/fleet.config" 2>/dev/null; echo "${WORKTREE_ROOT:-$main/.claude/worktrees}")"
+  case "$top/" in "$wt"/*) echo "$main" ;; *) echo "$top" ;; esac
 }
 
 # Load kit defaults, then .fleet/fleet.config, then runtime overrides.
@@ -65,6 +75,16 @@ load_config() {
   [ -f "$RT/tower.json" ]  || echo '{"escalations":[]}' > "$RT/tower.json"
   touch "$RT/decisions.log"
   [ -f "$RT/ceiling" ] && LANE_CEILING="$(cat "$RT/ceiling")"
+  # The runtime belongs to one checkout. Anything that spawns from a different one would put
+  # worktrees somewhere nobody is watching while rostering them here.
+  if [ -f "$RT/repo_path" ]; then
+    INSTANCE_REPO="$(cat "$RT/repo_path")"
+    # Resolve it the same way REPO_PATH was resolved, or /var vs /private/var makes the guard
+    # fire on the very checkout it belongs to.
+    [ -d "$INSTANCE_REPO" ] && INSTANCE_REPO="$(cd "$INSTANCE_REPO" && pwd -P)"
+  else
+    INSTANCE_REPO="$REPO_PATH"; printf '%s\n' "$REPO_PATH" > "$RT/repo_path"
+  fi
   LANES_FILE="$FLEET_DIR/lanes.json"
   [ -f "$LANES_FILE" ] || echo '{"lanes":[]}' > "$LANES_FILE"
 }

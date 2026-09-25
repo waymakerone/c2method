@@ -94,9 +94,18 @@ Start at step 1 of the lane loop.
 EOF
 }
 
+# Refuse to start anything from a checkout the runtime was not built from.
+assert_instance_repo() {
+  [ "$REPO_PATH" = "${INSTANCE_REPO:-$REPO_PATH}" ] && return 0
+  die "this runtime belongs to $INSTANCE_REPO, but you are in $REPO_PATH.
+  Spawning from here would put worktrees under a checkout nobody is watching while rostering
+  them in the shared runtime. Run it from $INSTANCE_REPO, or use a different FLEET_HOME."
+}
+
 # Spawn <who> (a prd id, "tower" or "checkpoint"). Roster first, process second (rule 1).
 spawn_one() {
   local who="$1" role name wt model id respawns
+  assert_instance_repo
   name="$(lane_name "$who")"
   case "$who" in
     tower)      role=tower;      model="$MODEL_TOWER" ;;

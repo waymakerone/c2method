@@ -5,6 +5,24 @@ this file says where C² is *now*, built on its history rather than restarting f
 
 ---
 
+## v1.4.2 — one checkout, one runtime (2026-09-25)
+
+Found by enlisting two lanes on a real repo:
+
+- **The CLI targeted the wrong repo from a worktree.** A lane calling from its own worktree
+  should mean the main checkout; anyone else means the checkout they are standing in. A pilot
+  preparing an enlist on a branch was silently retargeted at main, reading the wrong PRD.
+- **`enlist` spawned.** On a launched fleet it flew lanes immediately, from whatever checkout ran
+  it — two were nearly flown from a throwaway clone while rostered in the shared runtime. Adding
+  a PRD to the list and putting an agent in the air are two decisions, and only one is reversible
+  by editing a file. Enlisting no longer spawns, and anything that does refuses from a checkout
+  the runtime was not built from.
+- **A failed lane lost its slot**, so a lower-priority lane quietly overtook it. It holds its
+  place until the pilot wakes or retires it.
+
+59 acceptance checks, 7 exec-runner checks. Each new test mutation-checked — three were vacuous
+on the first attempt, which is the rule earning its keep on the kit's own tests.
+
 ## v1.4.1 — the fix (2026-09-25)
 
 Three bugs in the fleet kit, all found by running it rather than reading it:

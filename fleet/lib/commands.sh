@@ -200,7 +200,7 @@ cmd_launch() {
 cmd_radar() {
   local live name prd rstate id lstatus ver seen items pr hb model flying n waiting=""
   live="$(runner_list)" || { warn "cannot list live sessions — liveness below is unknown"; live='[]'; }
-  flying="$(roster_lanes_in lane "starting,running,landing" | wc -l | tr -d ' ')"
+  flying="$(_flying | wc -l | tr -d ' ')"
   printf 'FLEET %s · %s/%s lanes flying · tower %s · checkpoint %s%s\n' "$INSTANCE_NAME" "$flying" "$LANE_CEILING" \
     "$(_role_mark tower "$live")" "$(_role_mark checkpoint "$live")" "$([ -f "$RT/launched" ] || echo ' · GROUNDED')"
   printf '%-26s %-9s %-8s %-9s %-11s %-7s %-7s %-10s\n' LANE STATE SAYS PRD-VER "ITEMS d/all" PR BEAT MODEL
@@ -273,14 +273,16 @@ cmd_enlist() {
   rm -f "$LANES_FILE.bak"
   decide "enlist $prd ($path) priority=$priority${after:+ after=$after}"
   say "enlisted $prd → lane $(lane_name "$prd"). Commit .fleet/lanes.json so the fleet config compounds."
-  [ -f "$RT/launched" ] && reconcile
+  # Enlisting never spawns. Adding a PRD to the list and putting an agent in the air are two
+  # decisions, and only one of them is reversible by editing a file.
+  [ -f "$RT/launched" ] && say "It flies at the next 'fleet reconcile' — or now, with 'fleet wake $prd'."
   return 0
 }
 
 cmd_scale() {
   local n="${1:-}" flying blocked warn=""
   case "$n" in ''|*[!0-9]*) die "usage: fleet scale <n>" ;; esac
-  flying="$(roster_lanes_in lane "starting,running,landing" | wc -l | tr -d ' ')"
+  flying="$(_flying | wc -l | tr -d ' ')"
   if [ "$n" -gt "$LANE_CEILING" ]; then
     blocked=0
     for prd in $(lanes_active); do [ "$(state_get "$prd" lane_status)" = blocked ] && blocked=$((blocked + 1)); done
