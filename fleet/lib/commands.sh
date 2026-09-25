@@ -155,6 +155,14 @@ cmd_preflight() {
   fi
   git -C "$REPO_PATH" rev-parse --verify -q "refs/heads/$BASE_BRANCH" >/dev/null && ok "base branch $BASE_BRANCH" \
     || bad "base branch $BASE_BRANCH not found"
+  if git -C "$REPO_PATH" remote get-url origin >/dev/null 2>&1; then
+    git -C "$REPO_PATH" fetch -q origin "$BASE_BRANCH" 2>/dev/null || true
+    local behind
+    behind="$(git -C "$REPO_PATH" rev-list --count "$BASE_BRANCH".."origin/$BASE_BRANCH" 2>/dev/null || echo 0)"
+    ok "lanes branch from origin/$BASE_BRANCH${behind:+$([ "${behind:-0}" -gt 0 ] && echo " (local $BASE_BRANCH is $behind behind — harmless)")}"
+  else
+    ok "no origin — lanes branch from local $BASE_BRANCH"
+  fi
   git -C "$REPO_PATH" check-ignore -q .claude/worktrees/x && ok ".claude/worktrees/ is gitignored" \
     || bad ".claude/worktrees/ is not gitignored"
   [ -w "$RT" ] && ok "runtime $RT writable" || bad "runtime $RT not writable"

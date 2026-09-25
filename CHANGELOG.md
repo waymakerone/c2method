@@ -5,6 +5,18 @@ this file says where C² is *now*, built on its history rather than restarting f
 
 ---
 
+## v1.4.3 — lanes start from the remote (2026-09-25)
+
+A lane's worktree branched from the **local** base branch, which in a working checkout is
+whatever it was last time someone checked it out. On the repo this was found in, local `main`
+was 11 commits behind `origin/main` — so every lane would have built on stale code and planned
+against a stale PRD, and nothing would have looked wrong.
+
+Lanes now branch from `origin/<base>` after a fetch, falling back to the local branch when there
+is no remote. `fleet preflight` says which one it will use, and how far behind local is.
+
+60 acceptance checks. Mutation-checked against a real remote.
+
 ## v1.4.2 — one checkout, one runtime (2026-09-25)
 
 Found by enlisting two lanes on a real repo:

@@ -16,6 +16,18 @@ validate_lane() {
 }
 
 # Create (or reuse) the worktree for <name> on branch fleet/<name>. Prints its path.
+# Where a new lane starts. A dev checkout's local `main` is whatever it was last time someone
+# checked it out — branch from that and every lane builds on stale code and plans against a
+# stale PRD. Use the remote's branch when there is one.
+base_ref() {
+  if git -C "$REPO_PATH" remote get-url origin >/dev/null 2>&1; then
+    git -C "$REPO_PATH" fetch -q origin "$BASE_BRANCH" 2>/dev/null || true
+    git -C "$REPO_PATH" rev-parse --verify -q "refs/remotes/origin/$BASE_BRANCH" >/dev/null \
+      && { echo "origin/$BASE_BRANCH"; return 0; }
+  fi
+  echo "$BASE_BRANCH"
+}
+
 ensure_worktree() {
   local name="$1" wt="$WORKTREE_ROOT/$1" br="fleet/$1"
   if [ ! -d "$wt" ]; then
@@ -23,7 +35,7 @@ ensure_worktree() {
     if git -C "$REPO_PATH" rev-parse --verify -q "refs/heads/$br" >/dev/null; then
       git -C "$REPO_PATH" worktree add -q "$wt" "$br" >&2
     else
-      git -C "$REPO_PATH" worktree add -q -b "$br" "$wt" "$BASE_BRANCH" >&2
+      git -C "$REPO_PATH" worktree add -q -b "$br" "$wt" "$(base_ref)" >&2
     fi
   fi
   echo "$wt"
