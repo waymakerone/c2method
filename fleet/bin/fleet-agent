@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+# fleet-agent — the exec-runner dispatcher for subscription seats.
+#
+# One Grok process and one local Ollama process, machine-wide. A second of
+# either exits before it calls a model. Claude model names are refused:
+# Fable, Opus, Sonnet and Haiku belong to the pilot's own session, not to a
+# fleet spawn. There is no API-key path in this script.
+#
+# Args: <name> <model> <prompt-file>
+#   ollama/<tag>   OpenCode against a local Ollama model
+#   grok/<id>      grok --prompt-file on the logged-in grok.com subscription
+# Model ids with no prefix are refused.
+set -euo pipefail
+
+name="${1:?fleet-agent: need the seat name}"
+model="${2:?fleet-agent: need a model}"
+prompt="${3:?fleet-agent: need a prompt file}"
+[ -f "$prompt" ] || { echo "fleet-agent: no prompt file $prompt" >&2; exit 2; }
+
+refuse() { echo "fleet-agent: $*" >&2; exit 2; }
+
+# mkdir is the lock. A dead owner's pid is cleared so a crashed seat cannot
+# wedge the machine until someone deletes a file.
+acquire_lock() {
+  local kind="$1" dir="$HOME/.fleet/locks" lock pid
+  mkdir -p "$dir"
+  lock="$dir/$kind"
+  if mkdir "$lock" 2>/dev/null; then
+    echo $$ > "$lock/pid"
+    trap 'rm -rf "$lock"' EXIT
+    return 0
+  fi
+  pid="$(cat "$lock/pid" 2>/dev/null || true)"
+  if [ -n "$pid" ] && ! kill -0 "$pid" 2>/dev/null; then
+    rm -rf "$lock"
+    mkdir "$lock"
+    echo $$ > "$lock/pid"
+    trap 'rm -rf "$lock"' EXIT
+    return 0
+  fi
+  refuse "a $kind seat is already running (pid ${pid:-unknown}). One $kind seat at a time."
+}
+
+case "$model" in
+  fable|opus|sonnet|haiku|claude/*|anthropic/*)
+    refuse "refused $model. Claude is the pilot's session. Fleet seats are ollama/<tag> or grok/<id>."
+    ;;
+  grok|grok/*)
+    acquire_lock grok
+    case "$model" in
+      grok) id="grok-4.7" ;;
+      *) id="${model#grok/}" ;;
+    esac
+    turns="${GROK_MAX_TURNS:-40}"
+    extra=()
+    case "$name" in
+      *-checkpoint)
+        # Review reads and runs commands. It does not edit the lane's tree.
+        turns="${GROK_CHECKPOINT_TURNS:-12}"
+        extra+=(--deny 'Edit(**)' --deny 'Write(**)')
+        ;;
+    esac
+    exec grok --prompt-file "$prompt" --model "$id" --output-format plain \
+      --max-turns "$turns" --no-subagents --disallowed-tools "Agent" \
+      --disable-web-search --permission-mode bypassPermissions \
+      --no-auto-update --cwd "$PWD" "${extra[@]}"
+    ;;
+  ollama/*)
+    acquire_lock ollama
+    command -v opencode >/dev/null || refuse "opencode is not on PATH. It is the local coding harness."
+    exec opencode run --model "$model" --auto --standalone "$(cat "$prompt")"
+    ;;
+  *)
+    refuse "refused $model. Use ollama/<tag> or grok/<id>. Anything else would bill Claude or the API."
+    ;;
+esac

@@ -93,6 +93,24 @@ fleet/
 └── test/                      acceptance.sh (fake runner) · runner-exec.sh
 ```
 
+## Subscription seats
+
+Claude Max and SuperGrok are one pool each, shared by every terminal. A fleet
+does not get a pool of its own. `bin/fleet-agent` is the exec dispatcher for
+that constraint. Point `AGENT_CMD` at it and set each seat's model:
+
+| Model value | What runs | Which seat |
+|---|---|---|
+| `ollama/<tag>` | OpenCode on a local Ollama model | tower, checkpoint, mechanical lanes |
+| `grok/<id>` | `grok --prompt-file` on the logged-in subscription, subagents off, turn-capped | one builder, machine-wide |
+| `fable`, `opus`, `sonnet`, `haiku`, anything else | refused, before any model is called | the pilot's own Claude session, never a fleet spawn |
+
+One Grok process and one Ollama process can run at a time, across every repo.
+A second of either exits before it calls a model. Set `TOWER_RESIDENT=false`
+and `CHECKPOINT_RESIDENT=false` so launch does not keep a tower or a reviewer
+alive. `fleet wake tower` and `fleet wake checkpoint` start them for one pass.
+`MAX_RESPAWNS=0` means a lane that exits stays down until the pilot wakes it.
+
 ## Using an agent other than Claude Code
 
 The method is agent-agnostic and so is the kit. Everything the fleet knows lives in files
@@ -108,7 +126,7 @@ use a shell can fly a lane. Two runners ship:
 FLEET_RUNNER="exec"
 AGENT_CMD='codex exec --model {model} --cd {cwd} "$(cat {prompt_file})"'
 # gemini: AGENT_CMD='gemini --model {model} --yolo --prompt "$(cat {prompt_file})"'
-# grok:   AGENT_CMD='grok --model {model} --prompt "$(cat {prompt_file})"'
+# seats:  AGENT_CMD="\"\$FLEET_KIT/bin/fleet-agent\" {name} {model} {prompt_file}"
 ```
 
 Placeholders: `{name} {model} {cwd} {prompt_file} {log_file}`. The exec runner starts the agent

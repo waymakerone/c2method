@@ -25,7 +25,7 @@ _fresh() { # name prd
 
 reconcile() {
   local live launched=0 name prd rstate id lstatus status hold after ver seen hb last flying
-  local queue='[]' spawned=0 n who why
+  local queue='[]' spawned=0 n who why roles
   ROSTER_CHANGES=0
   # Reconciling blind would call every lane lost and respawn the lot. Stop instead.
   live="$(runner_list)" || die "cannot list live sessions — reconcile skipped, nothing changed"
@@ -77,8 +77,12 @@ reconcile() {
   done
 
   if [ $launched = 1 ]; then
-    # 3. The tower and the checkpoint are always up while the fleet is launched.
-    for who in tower checkpoint; do
+    # 3. Resident roles stay up while the fleet is launched. Either role set to
+    #    false in fleet.config starts only on `fleet wake`, never from here.
+    roles=""
+    [ "${TOWER_RESIDENT:-true}" = true ] && roles="tower"
+    [ "${CHECKPOINT_RESIDENT:-true}" = true ] && roles="${roles:+$roles }checkpoint"
+    for who in $roles; do
       name="$(lane_name "$who")"; rstate="$(roster_get "$name" state)"
       case "$rstate" in
         starting|running|failed) continue ;;

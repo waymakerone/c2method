@@ -65,13 +65,14 @@ sessions, and a better model multiplies whatever you've already built.
    templates. Name it for your agent so it's read automatically — don't rely on
    a rename.
 
-2. **Fill in `CLAUDE.md`** — what the project is, the active work, where the
-   knowledge index lives. This is the file your AI reads first, every session.
+2. **Fill in your Router** (`AGENTS.md`, or whichever name you gave it in step 1):
+   what the project is, the active work, where the knowledge index lives. This is
+   the file your AI reads first, every session.
 
 3. **Write one Prompt Brief** before your next session, and one **Session Brief**
    at the end of it. That's the whole loop. Everything else compounds from there.
 
-Full half-day setup: **[c2method.ai/start](https://c2method.ai/start)**
+Step-by-step setup: **[c2method.ai/start](https://c2method.ai/start)**
 
 ---
 
@@ -79,7 +80,7 @@ Full half-day setup: **[c2method.ai/start](https://c2method.ai/start)**
 
 ```
 c2method/
-├── methodology.md      ← the full method       quick-start.md  ← half-day setup
+├── methodology.md      ← the full method       quick-start.md  ← step-by-step setup
 ├── flight-planning.md  ← the ceremony: file a plan before takeoff, close it on landing
 ├── skills/flight-plan/ ← installable skill — copy into your repo's .claude/skills/
 └── starter/         ← copy this into your project (cp -r starter/. your-project/)

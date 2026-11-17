@@ -39,3 +39,15 @@ DRAFT_PRS=false               # true: lanes open PRs as DRAFTS. GitHub refuses t
 MERGE_REQUIRES_PILOT=false    # true: the tower never merges — it lists approved PRs on the
                               # radar and you merge. Start here on any repo where a merge
                               # deploys, and turn it off once you trust the loop.
+
+# Resident seats. true (the default) keeps the role up for the whole launch and
+# respawns it. false means it starts only when the pilot runs `fleet wake`.
+# A subscription fleet sets both false: a standing tower or reviewer is a loop
+# of fresh contexts against one weekly pool.
+TOWER_RESIDENT=true
+CHECKPOINT_RESIDENT=true
+
+# Read by bin/fleet-agent when FLEET_RUNNER=exec. The claude runner ignores them.
+# GROK_MAX_TURNS caps one builder session. GROK_CHECKPOINT_TURNS caps one review.
+export GROK_MAX_TURNS="${GROK_MAX_TURNS:-40}"
+export GROK_CHECKPOINT_TURNS="${GROK_CHECKPOINT_TURNS:-12}"
