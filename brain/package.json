@@ -1,0 +1,9 @@
+{
+  "name": "c2-brain",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Draws a repository's contextbase and codebase as one 3D graph, and reports context governance.",
+  "bin": { "c2-brain": "./brain.mjs" },
+  "dependencies": { "d3-force-3d": "^3.0.5" }
+}

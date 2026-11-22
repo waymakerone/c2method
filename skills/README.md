@@ -23,5 +23,7 @@ A plugin-marketplace install (`/plugin marketplace add waymakerone/c2method` →
 | Skill | What it does |
 |---|---|
 | [`flight-plan`](flight-plan/SKILL.md) | Prepare a flight plan from a Feature PRD before a build session — draw the scope line, interrogate the spec, draft the Prompt Briefs, plot the journey. Stops at *filed*; never builds. |
+| [`c2-brain`](c2-brain/SKILL.md) | Draw the repo's brain (contextbase and codebase as one 3D graph in a single HTML file) and report context governance: coverage, dark code, dead context, compounding rate. Reads only; writes at most a `brain.config.json`. |
+| [`c2-govern`](c2-govern/SKILL.md) | Close the governance gap the brain shows: declare what documents already govern, write a rule for the darkest folders, turn records of past work into knowledge, then measure again. Changes documents only, one at a time, each accepted by the pilot. |
 
 Learn the methodology behind these at **c2method.ai**.

@@ -5,6 +5,40 @@ this file says where C² is *now*, built on its history rather than restarting f
 
 ---
 
+## v1.5.0 — the brain, and context governance (2026-11-22)
+
+**The claim:** the power of a contextbase is not how much it holds. It is how much of the work
+it governs. [`context-governance.md`](context-governance.md) is version 1 of that idea. It builds
+on the Context Compass (four kinds of memory: North working, East episodic, South semantic, West
+procedural) and adds the needle: governance is what points a specific South or West document at
+specific work.
+
+**[`brain/`](brain/README.md)** draws a repository's contextbase and codebase as one 3D graph in
+a single HTML file, and reports four numbers: coverage, dark code, dead context and compounding
+rate. A document declares what it binds with `governs:` in its frontmatter. Until it does,
+governance is inferred from what the document names. `--public` writes a copy with every title
+and path removed.
+
+**[`skills/c2-brain`](skills/c2-brain/SKILL.md)** has an agent find where a repo keeps its
+context, pick up its design system, run the tool and explain the numbers.
+
+**A solar system, one sphere per app.** The contextbase is the sphere in the middle. Shared code
+circles close in and each app is its own sphere on a wide orbit beyond it. Apps are the folders
+inside `apps/` or `native/`, or the ones listed under `apps` in the config.
+
+**Folders open.** Click a folder in the legend to see its subfolders, down to a single folder of
+PRDs, with the rest of the brain dimmed behind it.
+
+**Closing the gap.** A number with no next step is a dashboard. Every run writes a worklist: the
+documents ready to declare, the darkest folders with the records to draw a rule from, and the
+files a team keeps relearning. The page shows the same list behind **Close the gap**, and each
+number has an explanation. **[`skills/c2-govern`](skills/c2-govern/SKILL.md)** works the list one
+document at a time with the pilot. `brain/governs.mjs` answers "which documents govern this
+file?", most specific first, so an agent can be handed them before it writes.
+
+Measured on one repository so far. Compounding rate is provisional, and the rule that weights a
+specific document above a broad one is not written.
+
 ## v1.4.3 — lanes start from the remote (2026-09-25)
 
 A lane's worktree branched from the **local** base branch, which in a working checkout is

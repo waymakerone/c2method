@@ -1,0 +1,17 @@
+{
+  "name": "my-project",
+  "context": ["docs"],
+  "router": ["CLAUDE.md", "AGENTS.md"],
+  "apps": ["apps/*", "packages/*"],
+  "kinds": [
+    ["standard", "/standards/"]
+  ],
+  "compassKinds": {
+    "standard": "south"
+  },
+  "theme": {
+    "mode": "light",
+    "light": { "bg": "#FAFAFA", "ink": "#0A0A0A", "accent": "#0A0A0A", "onAccent": "#FAFAFA" },
+    "dark": { "bg": "#0A0A0A", "ink": "#FAFAFA", "accent": "#FAFAFA", "onAccent": "#0A0A0A" }
+  }
+}

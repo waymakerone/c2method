@@ -83,6 +83,10 @@ c2method/
 ├── methodology.md      ← the full method       quick-start.md  ← step-by-step setup
 ├── flight-planning.md  ← the ceremony: file a plan before takeoff, close it on landing
 ├── skills/flight-plan/ ← installable skill — copy into your repo's .claude/skills/
+├── context-governance.md ← what makes a contextbase powerful, and the 4 numbers that measure it
+├── brain/              ← draw your repo's brain as one 3D graph and measure what the context governs
+├── skills/c2-brain/    ← the skill that sets the brain up for your repo and explains the numbers
+├── skills/c2-govern/   ← the skill that closes the gap: declare, write the missing rules, measure again
 └── starter/         ← copy this into your project (cp -r starter/. your-project/)
     ├── AGENTS.md                      ← the Router (router.md): your AI reads this first
     ├── .claude/commands/             ← learn.md, audit.md (agent commands)

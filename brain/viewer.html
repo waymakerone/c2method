@@ -1,0 +1,423 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Repo Brain</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin:0; height:100%; background:var(--bg); color:var(--ink); font:13px/1.45 var(--sans); overflow:hidden; }
+  canvas { position:fixed; inset:0; width:100%; height:100%; cursor:grab; }
+  canvas.drag { cursor:grabbing; }
+  .panel { position:fixed; background:var(--panel); border:1px solid var(--rule); border-radius:4px; backdrop-filter:blur(8px); }
+  #left { top:14px; left:14px; width:272px; max-height:calc(100% - 124px); display:flex; flex-direction:column; }
+  #left header { padding:14px 16px 10px; border-bottom:1px solid var(--rule); }
+  h1 { margin:0; font:600 19px/1.2 var(--display); letter-spacing:-.01em; }
+  .sub { color:var(--muted); font-size:11.5px; margin-top:3px; }
+  .stats { display:grid; grid-template-columns:1fr 1fr; gap:8px 12px; padding:12px 16px; border-bottom:1px solid var(--rule); }
+  .stat b { display:block; font:600 20px/1.1 var(--display); font-variant-numeric:tabular-nums; }
+  .cap, .stat small { color:var(--muted); font:500 10px/1.5 var(--mono); text-transform:uppercase; letter-spacing:.08em; }
+  .stats p { grid-column:1/-1; margin:0; color:var(--muted); font-size:11.5px; }
+  .stat .i { all:unset; cursor:pointer; display:inline-block; width:13px; height:13px; margin-left:4px; border:1px solid var(--muted); border-radius:50%; text-align:center; font:600 9px/13px var(--sans); text-transform:none; letter-spacing:0; vertical-align:1px; }
+  .stat .i:hover, .stat .i.on { background:var(--accent); color:var(--on-accent); border-color:var(--accent); }
+  .stat .i:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+  .stats .explain { color:var(--ink); line-height:1.45; padding:8px 10px; border:1px solid var(--rule); border-radius:4px; }
+  .stats .explain b { font-weight:600; }
+  .stats .go { all:unset; grid-column:1/-1; cursor:pointer; text-align:center; padding:7px 10px; border-radius:4px; background:var(--accent); color:var(--on-accent); font:600 12px/1.2 var(--sans); }
+  .stats .go:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+  #right .step { margin:12px 0 2px; font:600 13px/1.3 var(--sans); }
+  #right .note { margin:0 0 4px; color:var(--muted); font-size:11.5px; line-height:1.45; }
+  #right .nb.w { display:flex; align-items:center; }
+  #right .nb.w i { flex:none; }
+  #right .nb.w span { overflow:hidden; text-overflow:ellipsis; }
+  #right .nb.w em { margin-left:auto; padding-left:8px; color:var(--muted); font-style:normal; font-size:11px; flex:none; }
+  .controls { padding:10px 16px; border-bottom:1px solid var(--rule); display:flex; flex-direction:column; gap:8px; }
+  input[type=search] { width:100%; background:transparent; border:1px solid var(--rule); border-radius:3px; color:var(--ink); padding:6px 9px; font:inherit; outline:none; }
+  input[type=search]:focus { border-color:var(--accent); }
+  .seg { display:flex; border:1px solid var(--rule); border-radius:3px; overflow:hidden; }
+  .seg button { flex:1; background:none; border:0; color:var(--muted); padding:5px 0; font:inherit; font-size:12px; cursor:pointer; }
+  .seg button.on { background:var(--accent); color:var(--on-accent); font-weight:600; }
+  #legend { overflow:auto; padding:4px 8px 10px; }
+  .row { display:flex; align-items:center; gap:8px; padding:2.5px 8px; border-radius:3px; cursor:pointer; user-select:none; }
+  .row:hover { background:var(--rule); }
+  .row.off { opacity:.3; }
+  .dot { width:9px; height:9px; border-radius:50%; flex:none; }
+  .dot.sq { border-radius:1px; }
+  .row span { flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .row em { color:var(--muted); font-style:normal; font-variant-numeric:tabular-nums; font-size:11.5px; }
+  #legend .cap { padding:9px 8px 3px; display:flex; justify-content:space-between; }
+  #legend .why { margin:0; padding:0 8px 2px 25px; color:var(--muted); font-size:11.5px; line-height:1.4; }
+  #legend .lead { margin:0; padding:8px 8px 2px; font-size:11.5px; line-height:1.45; }
+  #legend .sub { display:flex; justify-content:space-between; gap:8px; padding:1px 8px 1px 25px; color:var(--muted); font-size:11.5px; }
+  #legend .sub span { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  #legend .sub em { font-style:normal; font-variant-numeric:tabular-nums; flex:none; }
+  #legend .gap { height:6px; }
+  #legend .crumb { padding:8px 8px 2px; font-size:11.5px; line-height:1.6; color:var(--muted); }
+  #legend .crumb button { all:unset; cursor:pointer; color:var(--ink); text-decoration:underline; text-underline-offset:2px; }
+  #legend .crumb button:focus-visible, #legend [data-open]:focus-visible { outline:2px solid var(--accent); outline-offset:1px; }
+  #legend .crumb b { color:var(--ink); font-weight:600; }
+  #legend .row[data-open] span::after { content:' ›'; color:var(--muted); }
+  #legend .sub[data-open] { cursor:pointer; border-radius:3px; }
+  #legend .sub[data-open]:hover { background:var(--rule); }
+  #legend .dot { cursor:pointer; }
+  #right { top:14px; right:14px; width:320px; max-height:calc(100% - 124px); overflow:auto; padding:14px 16px; display:none; }
+  #right h2 { margin:0 22px 4px 0; font:600 16px/1.3 var(--display); }
+  #right .x { position:absolute; top:8px; right:10px; background:none; border:0; color:var(--muted); font-size:18px; cursor:pointer; }
+  .path { color:var(--muted); font:11px/1.4 var(--mono); word-break:break-all; }
+  .chips { display:flex; flex-wrap:wrap; gap:5px; margin:9px 0; }
+  .chip { border:1px solid var(--rule); border-radius:99px; padding:1px 8px; font-size:11.5px; color:var(--ink); cursor:pointer; background:none; font-family:inherit; }
+  .chip.k { border-color:var(--ink); cursor:default; }
+  .nb { padding:3px 0; cursor:pointer; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .nb:hover { text-decoration:underline; }
+  .nb i { display:inline-block; width:7px; height:7px; margin-right:7px; border-radius:50%; }
+  #time { left:14px; right:14px; bottom:14px; padding:10px 14px 8px; display:flex; align-items:flex-end; gap:10px; }
+  .rb { width:32px; height:32px; border-radius:50%; border:1px solid var(--rule); background:none; color:var(--muted); cursor:pointer; flex:none; font-size:13px; }
+  .rb.on, #play { border-color:var(--ink); color:var(--ink); }
+  #home { width:auto; padding:0 13px; border-radius:16px; border-color:var(--ink); color:var(--ink); font:600 12px/1 var(--sans); }
+  #home:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+  #bars { flex:1; height:44px; display:flex; align-items:flex-end; gap:1px; cursor:pointer; }
+  #bars i { flex:1; background:var(--rule); min-height:1px; }
+  #bars i.in { background:var(--ink); }
+  #when { width:190px; text-align:right; font-variant-numeric:tabular-nums; flex:none; }
+  #when b { display:block; font:600 16px/1.2 var(--display); }
+  #when small { color:var(--muted); }
+  #tip { position:fixed; pointer-events:none; background:var(--bg); border:1px solid var(--rule); border-radius:3px; padding:5px 9px; max-width:340px; display:none; font-size:12px; z-index:5; }
+  #tip small { color:var(--muted); display:block; }
+  #labels { position:fixed; inset:0; pointer-events:none; overflow:hidden; }
+  #labels .sp { pointer-events:auto; background:none; color:var(--muted); font:500 10px/1.4 var(--mono); text-transform:uppercase; letter-spacing:.08em; transform:translate(-50%,-110%); }
+  #labels .sp[data-open] { cursor:pointer; }
+  #labels .sp[data-open]:hover { color:var(--ink); text-decoration:underline; }
+  #labels div { position:absolute; transform:translate(-50%,-160%); background:var(--panel); color:var(--ink); font-size:11px; padding:0 5px; border-radius:2px; white-space:nowrap; }
+  @media (max-width: 760px) { #left { width:214px; } .stats { display:none; } #right { width:calc(100% - 28px); top:auto; bottom:110px; max-height:40%; } #when { width:120px; } }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas><div id="labels"></div>
+<div id="left" class="panel">
+  <header><h1 id="name"></h1><div class="sub" id="gen"></div></header>
+  <div class="stats" id="stats"></div>
+  <div class="controls">
+    <input id="q" type="search" placeholder="Search titles, paths, tags">
+    <div class="seg" id="side"><button data-v="all" class="on">All</button><button data-v="context">Context</button><button data-v="code">Code</button></div>
+    <div class="seg" id="colorBy"><button data-v="group" class="on">Folder</button><button data-v="compass">Compass</button><button data-v="kind">Kind</button><button data-v="status">Status</button></div>
+  </div>
+  <div id="legend"></div>
+</div>
+<div id="right" class="panel"></div>
+<div id="time" class="panel">
+  <button id="home" class="rb" title="Recenter: back to the full view (Esc)" >Recenter</button><button id="spin" class="rb on" title="Rotate">⟳</button><button id="mode" class="rb" title="Light or dark">◐</button><button id="play" class="rb" title="Watch it grow">▶</button>
+  <div id="bars"></div><div id="when"><b></b><small></small></div>
+</div>
+<div id="tip"></div>
+<script>
+const G = /*__GRAPH__*/null;
+const N = G.nodes, L = G.links, T = G.theme;
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt = n => n >= 1e6 ? (n/1e6).toFixed(1)+'M' : n >= 1e4 ? Math.round(n/1e3)+'k' : n.toLocaleString();
+const hex = h => [1,3,5].map(i => parseInt(h.slice(i,i+2),16)/255);
+const natural = (a, b) => a.localeCompare(b, undefined, { numeric: true });
+
+// ---- theme: the repo's own design system if the config carries one, else the C² look ----
+let mode = T.mode, C;
+if (T.fontHref) { const l = document.createElement('link'); l.rel = 'stylesheet'; l.href = T.fontHref; document.head.appendChild(l); }
+function applyMode() { C = T[mode]; const s = document.documentElement.style;
+  for (const [k, v] of Object.entries({ bg:C.bg, ink:C.ink, muted:C.muted, rule:C.rule, panel:C.panel, accent:C.accent, 'on-accent':C.onAccent, sans:T.font.sans, display:T.font.display, mono:T.font.mono })) s.setProperty('--' + k, v); }
+applyMode();
+
+// ---- derived ----
+N.forEach(n => { n.deg = 0; n.out = []; n.in = []; n.gout = []; n.gin = []; n.file = n.type === 'file'; });
+L.forEach(l => { if (l.kind === 'governs') { N[l.s].gout.push(l.t); N[l.t].gin.push(l.s); } else { N[l.s].out.push(l.t); N[l.t].in.push(l.s); } if (l.kind !== 'tree') { N[l.s].deg++; N[l.t].deg++; } l.bridge = l.kind !== 'tree' && N[l.s].side !== N[l.t].side; });
+N.forEach(n => { n.r = n.kind === 'router' ? 9 : n.file ? Math.max(1.5, Math.min(13, 1.1 + Math.sqrt(n.deg) * 0.8)) : Math.max(1, Math.min(9, Math.sqrt(n.deg) * 0.6)); });
+const dates = N.map(n => n.date).filter(Boolean).sort();
+const first = dates[0] || '2000-01-01', last = dates[dates.length-1] || first;
+N.forEach(n => { if (!n.date) n.date = first; n.m = n.date.slice(0,7); });
+const months = []; { let [y,m] = first.split('-').map(Number); const [ly,lm] = last.split('-').map(Number);
+  while (y < ly || (y === ly && m <= lm)) { months.push(y + '-' + String(m).padStart(2,'0')); if (++m > 12) { m = 1; y++; } } }
+const perMonth = months.map(mm => N.reduce((a,n) => a + (n.file && n.m === mm ? 1 : 0), 0));
+const hasCode = N.some(n => n.side === 'code'); if (!hasCode) $('side').style.display = 'none';
+
+// ---- state ----
+let side = 'all', colorBy = 'group', hidden = new Set(), sel = null, hover = null, query = '', tag = null, tIdx = months.length - 1, playing = null;
+let colors = new Map(), near = null, dirty = true, hubs = [];
+// ---- folder drill-down: open a folder to see its subfolders; everything outside it recedes ----
+let focus = null; // { side, path }
+const canOpen = !G.public; // a public graph has no paths to open
+const folderAt = new Map(N.filter(n => n.type === 'folder').map(n => [n.side + ':' + n.path, n]));
+const groupRoot = new Map(); // "side:group" -> the shallowest folder of that group
+N.forEach(n => { if (n.type !== 'folder' || !n.path || n.group[0] === '(') return; const k = n.side + ':' + n.group, c = groupRoot.get(k); if (!c || n.path.split('/').length < c.split('/').length) groupRoot.set(k, n.path); });
+const inFocus = n => !focus || (n.side === focus.side && (n.path === focus.path || n.path.startsWith(focus.path + '/')));
+const sub = n => { if (!focus) return n.group; const rest = n.path.slice(focus.path.length + 1), i = rest.indexOf('/'); return n.type === 'folder' ? rest.split('/')[0] || '(files here)' : i < 0 ? '(files here)' : rest.slice(0, i); };
+const openPath = (s, name) => { if (!canOpen || name[0] === '(') return null; const p = focus ? focus.path + '/' + name : groupRoot.get(s + ':' + name); return p && folderAt.has(s + ':' + p) ? p : null; };
+const openAttr = (s, name) => { const p = openPath(s, name); return p ? ` data-open="${esc(p)}" data-side="${s}" tabindex="0" title="Open ${esc(name)}"` : ''; };
+function crumb() { if (!focus) return ''; const parts = focus.path.split('/'); let html = `<button data-open="" data-side="${focus.side}">All folders</button>`;
+  parts.forEach((seg, i) => { const p = parts.slice(0, i + 1).join('/'); html += ' / ' + (i === parts.length - 1 ? `<b>${esc(seg)}</b>` : folderAt.has(focus.side + ':' + p) ? `<button data-open="${esc(p)}" data-side="${focus.side}">${esc(seg)}</button>` : esc(seg)); });
+  return `<div class="crumb">${html}</div>`; }
+function drill(s, path) {
+  focus = path ? { side: s, path } : null; hidden.clear(); sel = null; $('right').style.display = 'none';
+  if (focus && side !== 'all' && side !== focus.side) { side = 'all'; [...$('side').children].forEach(x => x.classList.toggle('on', x.dataset.v === 'all')); }
+  legend(); refresh(); timeUI(); spin(false);
+  if (!focus) { goal.t = [0,0,0]; goal.dist = HOME; return; }
+  const inside = N.filter(n => n.file && inFocus(n)); if (!inside.length) return;
+  const c = [0,0,0]; inside.forEach(n => { c[0] += n.x; c[1] += n.y; c[2] += n.z; }); for (let i = 0; i < 3; i++) c[i] /= inside.length;
+  const r = Math.max(...inside.map(n => Math.hypot(n.x - c[0], n.y - c[1], n.z - c[2])));
+  goal.t = c; goal.dist = Math.min(HOME, Math.max(extent * .25, r * 2.6));
+}
+const key = n => colorBy === 'group' ? (focus ? (inFocus(n) ? 'sub:' + sub(n) : '(out)') : n.side + ':' + n.group) : !n.file ? '(folder)' : colorBy === 'compass' ? (n.side === 'code' ? 'gov:' + n.gov : n.compass) : n[colorBy] || '(none)';
+const COMPASS = [['north', 'North · in flight'], ['east', 'East · what happened'], ['south', 'South · what is true'], ['west', 'West · how we work']];
+const GOV = [['gov:direct', 'Governed by name'], ['gov:folder', 'Governed by folder'], ['gov:dark', 'Dark code']];
+
+function legend() {
+  const pal = T.palette[mode], counts = new Map();
+  N.forEach(n => { if (n.file && inFocus(n) && (side === 'all' || n.side === side)) counts.set(key(n), (counts.get(key(n)) || 0) + 1); });
+  const row = (k, label, sq, open = '') => `<div class="row${hidden.has(k)?' off':''}" data-v="${esc(k)}"${open}><i class="dot${sq?' sq':''}" style="background:${colors.get(k)}"></i><span>${esc(label)}</span><em>${counts.get(k).toLocaleString()}</em></div>`;
+  colors = new Map([['(folder)', C.muted], ['(none)', C.muted], ['(out)', C.muted]]);
+  let html = '';
+  if (colorBy === 'group' && focus) { // inside a folder: its subfolders, each its own colour
+    const kids = [...counts.keys()].map(k => k.slice(4)).sort((a, b) => (a[0] === '(') - (b[0] === '(') || natural(a, b));
+    kids.forEach((k, i) => colors.set('sub:' + k, k[0] === '(' ? C.ink : pal[i % pal.length]));
+    html = crumb() + `<div class="cap"><span>${kids.some(k => openPath(focus.side, k)) ? 'Subfolders · click to open' : 'Files'}</span><span>${[...counts.values()].reduce((a, c) => a + c, 0).toLocaleString()}</span></div>` + kids.map(k => row('sub:' + k, k, focus.side === 'code', openAttr(focus.side, k))).join('');
+  } else if (colorBy === 'group') { // folders in folder order, so a folder keeps its colour as the repo grows
+    let i = 0;
+    for (const [s, label] of [['context', 'Contextbase'], ['code', 'Codebase']]) {
+      const groups = [...new Set(N.filter(n => n.file && n.side === s).map(n => n.group))].sort(natural);
+      for (const g of groups) colors.set(s + ':' + g, g === '(router)' ? C.ink : pal[i++ % pal.length]);
+      const vis = groups.filter(g => counts.has(s + ':' + g)); if (!vis.length) continue;
+      html += `<div class="cap"><span>${label}${canOpen ? ' · click to open' : ''}</span><span>${vis.reduce((a, g) => a + counts.get(s + ':' + g), 0).toLocaleString()}</span></div>` + vis.map(g => row(s + ':' + g, g, s === 'code', openAttr(s, g))).join('');
+    }
+  } else if (colorBy === 'compass') { // the four kinds of memory, and how far the needle reaches into the code
+    const dark = mode === 'dark';
+    Object.entries({ north: dark ? '#FFA24C' : '#D97A1F', east: dark ? '#8E9BB0' : '#8A93A0', south: dark ? '#6FA8FF' : '#2F6FB5', west: dark ? '#5FD38D' : '#2F8F5E',
+      'gov:direct': C.ink, 'gov:folder': C.muted, 'gov:dark': dark ? '#FF7A70' : '#C2453E' }).forEach(([k, v]) => colors.set(k, v));
+    // every direction says what it is and which of the repo's own folders sit in it: the Compass is a
+    // second reading of folders the user already knows, never a replacement for them
+    const WHY = { north: 'Working memory. What is in flight now: active briefs and tasks.', east: 'Episodic memory. What happened: session briefs, reviews, finished work.',
+      south: 'Semantic memory. What is true: requirements, decisions, patterns, gotchas.', west: 'Procedural memory. How the work is done: runbooks, templates, the Router.',
+      'gov:direct': 'A South or West document names this file.', 'gov:folder': 'A South or West document names the folder it sits in.', 'gov:dark': 'No South or West document points here.' };
+    const by = new Map(); // key -> folder -> files
+    N.forEach(n => { if (!n.file || !inFocus(n) || !(side === 'all' || n.side === side)) return; const k = key(n); if (!by.has(k)) by.set(k, new Map()); const m = by.get(k), g = sub(n); m.set(g, (m.get(g) || 0) + 1); });
+    const folders = k => { const f = [...by.get(k)].sort((a, b) => b[1] - a[1]), top = f.slice(0, 6), rest = f.slice(6);
+      const s = k.startsWith('gov:') ? 'code' : 'context';
+      return top.map(([g, c]) => `<div class="sub"${openAttr(s, g)}><span>${esc(g)}</span><em>${c.toLocaleString()}</em></div>`).join('') + (rest.length ? `<div class="sub"><span>${rest.length} more folders</span><em>${rest.reduce((a, [, c]) => a + c, 0).toLocaleString()}</em></div>` : ''); };
+    const block = (label, rows, sq) => { const vis = rows.filter(([k]) => counts.has(k)); return vis.length ? `<div class="cap"><span>${label}</span><span>${vis.reduce((a, [k]) => a + counts.get(k), 0).toLocaleString()}</span></div>` + vis.map(([k, l]) => row(k, l, sq) + `<p class="why">${WHY[k]}</p>` + folders(k) + '<div class="gap"></div>').join('') : ''; };
+    html = crumb() + `<p class="lead">The Compass sorts context into 4 kinds of memory. Governance is the needle: a South or West document pointed at code. Folders are listed under the direction they fall in.</p>` + block('Context Compass', COMPASS) + block('Codebase', GOV, true);
+    // the needle: governs links, drawn in the colour of the document that governs
+    const gl_ = L.filter(l => l.kind === 'governs'), dec = gl_.filter(l => l.declared).length;
+    if (gl_.length) html += `<div class="cap"><span>Governs links</span><span>${gl_.length.toLocaleString()}</span></div><p class="why" style="padding-left:8px">${dec ? dec.toLocaleString() + ' declared, ' + (gl_.length - dec).toLocaleString() + ' inferred.' : 'All inferred. Nothing is declared yet.'} Add <code>governs:</code> to a document's frontmatter to declare one.</p>`;
+  } else {
+    const all = new Map(); N.forEach(n => { if (n.file) all.set(key(n), (all.get(key(n)) || 0) + 1); });
+    [...all].sort((a,b) => b[1]-a[1]).forEach(([k], i) => { if (k !== '(none)') colors.set(k, k === 'router' ? C.ink : pal[i % pal.length]); });
+    html = crumb() + `<div class="cap"><span>${colorBy === 'kind' ? 'Kinds' : 'Status'}</span><span>click to hide</span></div>` + [...counts].sort((a,b) => b[1]-a[1]).map(([k]) => row(k, k)).join('');
+  }
+  $('legend').innerHTML = html;
+}
+$('legend').onclick = e => { const o = e.target.closest('[data-open]'); if (o && !e.target.closest('.dot')) return drill(o.dataset.side, o.dataset.open);
+  const r = e.target.closest('.row'); if (!r) return; const v = r.dataset.v; hidden.has(v) ? hidden.delete(v) : hidden.add(v); legend(); refresh(); };
+// recenter: out of any folder, selection or search, back to the whole brain from the front
+function recenter() { query = ''; tag = null; $('q').value = ''; cam.ph = TILT; drill(focus ? focus.side : 'context', ''); }
+$('home').onclick = recenter;
+addEventListener('keydown', e => { if (e.key === 'Escape' && e.target === document.body) recenter(); });
+$('legend').onkeydown = e => { if (e.key === 'Enter' && e.target.matches('[data-open]')) drill(e.target.dataset.side, e.target.dataset.open); };
+const seg = (id, set) => $(id).onclick = e => { const b = e.target.closest('button'); if (!b) return; set(b.dataset.v); [...$(id).children].forEach(x => x.classList.toggle('on', x === b)); legend(); refresh(); timeUI(); };
+seg('colorBy', v => { colorBy = v; hidden.clear(); }); seg('side', v => { side = v; });
+$('q').oninput = e => { query = e.target.value.trim().toLowerCase(); tag = null; refresh(); };
+$('mode').onclick = () => { mode = mode === 'light' ? 'dark' : 'light'; applyMode(); legend(); refresh(); };
+
+const shown = n => (side === 'all' || n.side === side) && n.m <= months[tIdx] && !(hidden.size && (n.file || colorBy === 'group') && hidden.has(key(n)));
+const matches = n => n.file && (tag ? n.tags.includes(tag) : !query || n.title.toLowerCase().includes(query) || n.path.toLowerCase().includes(query) || n.tags.some(t => t.includes(query)));
+
+// ---- WebGL: every node in one draw call, every connection in another ----
+const cv = $('c'), gl = cv.getContext('webgl', { antialias: true, alpha: false });
+function program(vs, fs) { const p = gl.createProgram(); for (const [t, src] of [[gl.VERTEX_SHADER, vs], [gl.FRAGMENT_SHADER, fs]]) { const sh = gl.createShader(t); gl.shaderSource(sh, src); gl.compileShader(sh); if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(sh)); gl.attachShader(p, sh); } gl.linkProgram(p); return p; }
+const DEPTH = 'float fade(float w, float d) { return clamp(1.55 - w / (d * 1.35), .3, 1.); }';
+const pP = program(`attribute vec3 p; attribute vec4 c; attribute float s, k; uniform mat4 m; uniform float px, dist; varying vec4 vc; varying float vk; ${DEPTH}
+  void main() { vec4 q = m * vec4(p, 1.); gl_Position = q; gl_PointSize = s == 0. ? 0. : max(2., s * px / q.w); vc = vec4(c.rgb, c.a * fade(q.w, dist)); vk = k; }`,
+  `precision mediump float; varying vec4 vc; varying float vk; void main() { vec2 o = abs(gl_PointCoord - .5) * 2.;
+    float d = vk > .5 ? max(o.x, o.y) * 1.25 : length(o); if (d > 1.) discard; gl_FragColor = vec4(vc.rgb, vc.a * max(smoothstep(.7, .56, d), (1. - d) * .35)); }`);
+const pL = program(`attribute vec3 p; attribute vec4 c; uniform mat4 m; uniform float dist; varying vec4 vc; ${DEPTH}
+  void main() { vec4 q = m * vec4(p, 1.); gl_Position = q; vc = vec4(c.rgb, c.a * fade(q.w, dist)); }`,
+  `precision mediump float; varying vec4 vc; void main() { gl_FragColor = vc; }`);
+const buf = (data, dyn) => { const b = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, b); gl.bufferData(gl.ARRAY_BUFFER, data, dyn ? gl.DYNAMIC_DRAW : gl.STATIC_DRAW); return b; };
+const xyz = new Float32Array(N.length * 3); N.forEach((n, i) => xyz.set([n.x, n.y, n.z], i * 3));
+const lxyz = new Float32Array(L.length * 6); L.forEach((l, i) => lxyz.set([N[l.s].x, N[l.s].y, N[l.s].z, N[l.t].x, N[l.t].y, N[l.t].z], i * 6));
+const nPos = buf(xyz), lPos = buf(lxyz), nShape = buf(new Float32Array(N.map(n => n.side === 'code' && n.file ? 1 : 0)));
+const nCol = new Float32Array(N.length * 4), nSize = new Float32Array(N.length), lCol = new Float32Array(L.length * 8);
+const nColB = buf(nCol, true), nSizeB = buf(nSize, true), lColB = buf(lCol, true);
+const vis = new Uint8Array(N.length), rgb = new Float32Array(N.length * 3);
+// each sphere is outlined by three faint great circles, so it reads as a sphere from any side
+const RING = 56, solar = (G.spheres || []).length > 1, rings = solar ? G.spheres : [], ORB = 160, orbs = solar ? G.orbits || [] : [], rxyz = new Float32Array(rings.length * 3 * RING * 6 + orbs.length * ORB * 6);
+rings.forEach((sp, k) => { for (let ax = 0; ax < 3; ax++) for (let i = 0; i < RING; i++) { const o = ((k * 3 + ax) * RING + i) * 6;
+  for (let e = 0; e < 2; e++) { const a = (i + e) / RING * Math.PI * 2, c = Math.cos(a) * sp.r, d = Math.sin(a) * sp.r;
+    rxyz.set(ax === 0 ? [sp.x + c, sp.y + d, sp.z] : ax === 1 ? [sp.x + c, sp.y, sp.z + d] : [sp.x, sp.y + c, sp.z + d], o + e * 3); } } });
+orbs.forEach((R, k) => { for (let i = 0; i < ORB; i++) for (let e = 0; e < 2; e++) { const a = (i + e) / ORB * Math.PI * 2; rxyz.set([Math.cos(a) * R, 0, Math.sin(a) * R], rings.length * 3 * RING * 6 + (k * ORB + i) * 6 + e * 3); } });
+const rPos = buf(rxyz), rCol = new Float32Array(rings.length * 3 * RING * 8 + orbs.length * ORB * 8), rColB = buf(rCol, true);
+function ringColours() { const c = hex(C.muted); rings.forEach((sp, k) => { const a = side === 'all' || side === sp.side ? (mode === 'light' ? .28 : .3) : 0;
+  for (let i = 0; i < 3 * RING * 2; i++) rCol.set([c[0], c[1], c[2], a], (k * 3 * RING * 2 + i) * 4); });
+  for (let i = 0; i < orbs.length * ORB * 2; i++) rCol.set([c[0], c[1], c[2], side === 'context' ? 0 : mode === 'light' ? .22 : .25], (rings.length * 3 * RING * 2 + i) * 4); gl.bindBuffer(gl.ARRAY_BUFFER, rColB); gl.bufferSubData(gl.ARRAY_BUFFER, 0, rCol); }
+
+function refresh() {
+  near = sel != null ? new Set([sel, ...N[sel].out, ...N[sel].in, ...N[sel].gout, ...N[sel].gin]) : null;
+  const filt = !!(query || tag), light = mode === 'light', cache = new Map(), ink = hex(C.ink), needle = colorBy === 'compass';
+  const col = k => { let c = cache.get(k); if (!c) cache.set(k, c = hex(colors.get(k) || C.muted)); return c; };
+  for (let i = 0; i < N.length; i++) { const n = N[i], on = shown(n); vis[i] = on;
+    const lit = near ? near.has(i) : inFocus(n) && (filt ? matches(n) : true), c = col(key(n)); rgb.set(c, i * 3);
+    nCol.set([c[0], c[1], c[2], on ? (lit ? (n.file ? 1 : .55) : .06) : 0], i * 4); nSize[i] = on ? n.r * (solar ? 7 : 4.6) * (lit && (near || filt) && n.file ? 1.3 : 1) : 0; n.lit = on && lit; }
+  for (let i = 0; i < L.length; i++) { const l = L[i], gov = needle && l.kind === 'governs'; let c = l.bridge && !gov ? ink : rgb.subarray(l.s * 3, l.s * 3 + 3);
+    // in Compass mode the governs links are the needle: they carry the colour, everything else recedes
+    const base = gov ? (l.declared ? .7 : light ? .3 : .22) : (l.bridge ? (light ? .012 : .02) : (l.kind === 'tree' ? .10 : .17) * (light ? 1.7 : 1)) * (needle ? .45 : 1);
+    const a = !vis[l.s] || !vis[l.t] ? 0 : near ? (l.s === sel || l.t === sel ? .8 : 0) : filt ? (N[l.s].lit && N[l.t].lit ? .5 : 0) : focus ? (N[l.s].lit && N[l.t].lit ? Math.min(.6, base * 1.8) : N[l.s].lit || N[l.t].lit ? base * .5 : 0) : base;
+    lCol.set([c[0], c[1], c[2], a, c[0], c[1], c[2], a], i * 8); }
+  gl.bindBuffer(gl.ARRAY_BUFFER, nColB); gl.bufferSubData(gl.ARRAY_BUFFER, 0, nCol);
+  gl.bindBuffer(gl.ARRAY_BUFFER, nSizeB); gl.bufferSubData(gl.ARRAY_BUFFER, 0, nSize);
+  gl.bindBuffer(gl.ARRAY_BUFFER, lColB); gl.bufferSubData(gl.ARRAY_BUFFER, 0, lCol);
+  ringColours();
+  hubs = G.public ? [] : N.filter(n => n.lit).sort((a,b) => b.deg - a.deg).slice(0, 12).map(n => n.id);
+  dirty = true;
+}
+
+// ---- camera: orbit a target; everything eases toward a goal ----
+const extent = G.ball || N.map(n => Math.hypot(n.x, n.y, n.z)).sort((a,b) => a-b)[Math.floor(N.length * .97)];
+const HOME = extent * (G.spheres && G.spheres.length > 1 ? 2.75 : G.ball ? 3.7 : 2.5), FOV = 0.7;
+const TILT = (G.spheres || []).length > 1 ? 0.62 : 0.12; // a solar system is seen from above its plane
+const cam = { th: 0, ph: TILT, dist: HOME * 1.5, t: [0,0,0] }, goal = { dist: HOME, t: [0,0,0] };
+let spinning = true, M = new Float32Array(16), W = 1, H = 1, PX = 1;
+const spin = on => { spinning = on; $('spin').classList.toggle('on', on); dirty = true; };
+$('spin').onclick = () => spin(!spinning);
+function matrix() {
+  const e = [cam.t[0] + cam.dist * Math.cos(cam.ph) * Math.sin(cam.th), cam.t[1] + cam.dist * Math.sin(cam.ph), cam.t[2] + cam.dist * Math.cos(cam.ph) * Math.cos(cam.th)];
+  let z = [e[0]-cam.t[0], e[1]-cam.t[1], e[2]-cam.t[2]]; const zl = Math.hypot(...z); z = z.map(v => v/zl);
+  let x = [z[2], 0, -z[0]]; const xl = Math.hypot(...x); x = x.map(v => v/xl);
+  const y = [z[1]*x[2]-z[2]*x[1], z[2]*x[0]-z[0]*x[2], z[0]*x[1]-z[1]*x[0]], dot = (a,b) => a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
+  const V = [x[0],y[0],z[0],0, x[1],y[1],z[1],0, x[2],y[2],z[2],0, -dot(x,e),-dot(y,e),-dot(z,e),1];
+  const f = 1 / Math.tan(FOV / 2), nr = cam.dist * .02, fr = cam.dist * 6 + extent * 4;
+  const P = [f/(W/H),0,0,0, 0,f,0,0, 0,0,(fr+nr)/(nr-fr),-1, 0,0,2*fr*nr/(nr-fr),0];
+  for (let c = 0; c < 4; c++) for (let r = 0; r < 4; r++) M[c*4+r] = P[r]*V[c*4] + P[4+r]*V[c*4+1] + P[8+r]*V[c*4+2] + P[12+r]*V[c*4+3];
+  const ox = W > 760 ? 272 / W : 0, oy = 70 / H; for (let c = 0; c < 4; c++) { M[c*4] += ox * M[c*4+3]; M[c*4+1] += oy * M[c*4+3]; } // keep the brain clear of the left panel
+}
+const project = n => { const w = M[3]*n.x + M[7]*n.y + M[11]*n.z + M[15]; if (w <= 0) return null;
+  return { x: ((M[0]*n.x + M[4]*n.y + M[8]*n.z + M[12]) / w * .5 + .5) * W, y: (1 - ((M[1]*n.x + M[5]*n.y + M[9]*n.z + M[13]) / w * .5 + .5)) * H, w }; };
+function resize() { const d = Math.min(devicePixelRatio || 1, 2); W = innerWidth; H = innerHeight; cv.width = W * d; cv.height = H * d; gl.viewport(0, 0, cv.width, cv.height); PX = cv.height / (2 * Math.tan(FOV / 2)); dirty = true; }
+
+const labelEls = new Map();
+const sphereEls = (G.spheres || []).length > 1 ? G.spheres.map(sp => { const el = document.createElement('div'); el.className = 'sp'; el.textContent = sp.name; el.title = sp.n.toLocaleString() + ' files and folders';
+  if (sp.side === 'code' && canOpen && folderAt.has('code:' + sp.name)) { el.dataset.open = sp.name; el.dataset.side = 'code'; } $('labels').appendChild(el); return [sp, el]; }) : [];
+$('labels').onclick = e => { const o = e.target.closest('.sp[data-open]'); if (o) drill(o.dataset.side, o.dataset.open); };
+function labels() {
+  const want = near ? [sel] : hubs, placed = [];
+  // every sphere carries its name above it: the contextbase in the middle, each app around it
+  for (const [sp, el] of sphereEls) { const p = (side === 'all' || side === sp.side) && !near && project({ x: sp.x, y: sp.y + sp.r, z: sp.z }), w = sp.name.length * 7.4 + 8;
+    const ok = p && p.x > (W > 760 ? 300 : 0) && !placed.some(q => Math.abs(q.x - p.x) < (q.w + w) / 2 && Math.abs(q.y - p.y) < 16);
+    el.style.display = ok ? '' : 'none'; if (ok) { placed.push({ x: p.x, y: p.y, w }); el.style.left = p.x + 'px'; el.style.top = p.y + 'px'; } }
+  for (const [i, el] of labelEls) if (!want.includes(i)) { el.remove(); labelEls.delete(i); }
+  for (const i of want) { const n = N[i]; let el = labelEls.get(i);
+    if (!el) { el = document.createElement('div'); el.textContent = n.title.length > 38 ? n.title.slice(0,36) + '…' : n.title; $('labels').appendChild(el); labelEls.set(i, el); }
+    const p = project(n), w = el.textContent.length * 6.2 + 10;
+    const ok = p && !placed.some(q => Math.abs(q.x - p.x) < (q.w + w) / 2 && Math.abs(q.y - p.y) < 18);
+    el.style.display = ok ? '' : 'none'; if (ok) { placed.push({ x: p.x, y: p.y, w }); el.style.left = p.x + 'px'; el.style.top = p.y + 'px'; } }
+}
+function attr(p, name, b, size) { const loc = gl.getAttribLocation(p, name); gl.bindBuffer(gl.ARRAY_BUFFER, b); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, size, gl.FLOAT, false, 0, 0); }
+function draw() {
+  requestAnimationFrame(draw);
+  const ease = (a, b) => Math.abs(b - a) < Math.abs(b) * 1e-4 + .01 ? b : (dirty = true, a + (b - a) * .09);
+  cam.dist = ease(cam.dist, goal.dist); for (let i = 0; i < 3; i++) cam.t[i] = ease(cam.t[i], goal.t[i]);
+  if (spinning) { cam.th += 0.0016; dirty = true; }
+  if (!dirty) return; dirty = false; matrix();
+  const bg = hex(C.bg); gl.clearColor(bg[0], bg[1], bg[2], 1); gl.clear(gl.COLOR_BUFFER_BIT); gl.enable(gl.BLEND); gl.disable(gl.DEPTH_TEST);
+  // light on dark adds up to a glow; ink on paper has to blend normally or it washes out to white
+  gl.useProgram(pL); gl.blendFunc(gl.SRC_ALPHA, mode === 'dark' ? gl.ONE : gl.ONE_MINUS_SRC_ALPHA); attr(pL, 'p', lPos, 3); attr(pL, 'c', lColB, 4);
+  gl.uniformMatrix4fv(gl.getUniformLocation(pL, 'm'), false, M); gl.uniform1f(gl.getUniformLocation(pL, 'dist'), cam.dist); gl.drawArrays(gl.LINES, 0, L.length * 2);
+  if (rings.length) { attr(pL, 'p', rPos, 3); attr(pL, 'c', rColB, 4); gl.drawArrays(gl.LINES, 0, rings.length * 3 * RING * 2 + orbs.length * ORB * 2); }
+  gl.useProgram(pP); gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA); attr(pP, 'p', nPos, 3); attr(pP, 'c', nColB, 4); attr(pP, 's', nSizeB, 1); attr(pP, 'k', nShape, 1);
+  gl.uniformMatrix4fv(gl.getUniformLocation(pP, 'm'), false, M); gl.uniform1f(gl.getUniformLocation(pP, 'px'), PX); gl.uniform1f(gl.getUniformLocation(pP, 'dist'), cam.dist); gl.drawArrays(gl.POINTS, 0, N.length);
+  labels();
+}
+
+function pick(mx, my) { let best = null, bd = 1e9; const d = cv.height / H;
+  for (let i = 0; i < N.length; i++) { if (!vis[i]) continue; const p = project(N[i]); if (!p) continue;
+    const r = Math.max(2, nSize[i] * PX / p.w) / d / 2 + 4, dx = p.x - mx, dy = p.y - my, q = dx*dx + dy*dy; if (q < r*r && q < bd) { bd = q; best = i; } } return best; }
+let drag = null;
+cv.onmousedown = e => { drag = { x: e.clientX, y: e.clientY, th: cam.th, ph: cam.ph, moved: false }; cv.classList.add('drag'); };
+onmouseup = e => { if (drag && !drag.moved && e.target === cv) select(pick(e.clientX, e.clientY)); drag = null; cv.classList.remove('drag'); };
+onmousemove = e => {
+  const tip = $('tip');
+  if (drag) { const dx = e.clientX - drag.x, dy = e.clientY - drag.y; if (Math.abs(dx) + Math.abs(dy) > 3) { drag.moved = true; spin(false); }
+    cam.th = drag.th - dx * 0.005; cam.ph = Math.max(-1.45, Math.min(1.45, drag.ph + dy * 0.005)); dirty = true; tip.style.display = 'none'; return; }
+  if (e.target !== cv) { tip.style.display = 'none'; return; }
+  hover = pick(e.clientX, e.clientY); cv.style.cursor = hover != null ? 'pointer' : ''; if (hover == null) { tip.style.display = 'none'; return; }
+  const n = N[hover]; tip.innerHTML = `${esc(n.title)}<small>${esc(n.kind)} · ${esc(n.group)} · ${n.deg} connections</small>`;
+  tip.style.display = 'block'; tip.style.left = Math.min(e.clientX + 14, innerWidth - 350) + 'px'; tip.style.top = (e.clientY + 14) + 'px';
+};
+cv.addEventListener('wheel', e => { e.preventDefault(); goal.dist = Math.max(extent * .08, Math.min(HOME * 3, goal.dist * Math.exp(e.deltaY * 0.0012))); dirty = true; }, { passive: false });
+
+function select(i) {
+  sel = i; refresh(); const p = $('right');
+  if (i == null) { p.style.display = 'none'; goal.t = [0,0,0]; goal.dist = HOME; return; }
+  const n = N[i], nb = ids => [...new Set(ids)].sort((a,b) => N[b].deg - N[a].deg).slice(0, 40).map(j => `<div class="nb" data-i="${j}"><i style="background:${colors.get(key(N[j])) || C.muted}"></i>${esc(N[j].title)}</div>`).join('');
+  p.innerHTML = `<button class="x" aria-label="Close">×</button><h2>${esc(n.title)}</h2><div class="path">${esc(n.path)}</div>
+    <div class="chips"><span class="chip k">${esc(n.side === 'code' ? (n.gov ? { direct: 'governed', folder: 'governed by folder', dark: 'dark code' }[n.gov] : 'code') : n.compass || n.side)}</span><span class="chip k">${esc(n.kind)}</span>${n.status ? `<span class="chip k">${esc(n.status)}</span>` : ''}${n.tags.map(t => `<button class="chip" data-t="${esc(t)}">#${esc(t)}</button>`).join('')}</div>
+    ${!n.file && canOpen && n.path ? `<div class="chips"><button class="chip" data-open="${esc(n.path)}" data-side="${n.side}">Open this folder</button></div>` : ''}
+    <div class="sub">Added ${n.date}${n.words ? ' · ' + n.words.toLocaleString() + (n.side === 'code' ? ' lines' : ' words') : ''}</div>
+    ${n.gout.length ? `<div class="cap" style="margin-top:10px">Governs (${new Set(n.gout).size})</div>${nb(n.gout)}` : ''}
+    ${n.gin.length ? `<div class="cap" style="margin-top:10px">Governed by (${new Set(n.gin).size})</div>${nb(n.gin)}` : ''}
+    ${n.out.length ? `<div class="cap" style="margin-top:10px">Points to (${new Set(n.out).size})</div>${nb(n.out)}` : ''}
+    ${n.in.length ? `<div class="cap" style="margin-top:10px">Referenced by (${new Set(n.in).size})</div>${nb(n.in)}` : ''}`;
+  p.style.display = 'block'; p.scrollTop = 0; spin(false);
+  const reach = Math.max(120, ...[...near].map(j => Math.hypot(N[j].x - n.x, N[j].y - n.y, N[j].z - n.z))); // frame it with everything it touches
+  goal.t = [n.x, n.y, n.z]; goal.dist = Math.min(HOME, reach * 2.3);
+}
+$('right').onclick = e => { if (e.target.closest('.x')) return select(null); const o = e.target.closest('[data-open]'); if (o) return drill(o.dataset.side, o.dataset.open); const b = e.target.closest('.nb'); if (b) return b.dataset.i != null ? select(+b.dataset.i) : undefined;
+  const t = e.target.closest('[data-t]'); if (t) { tag = t.dataset.t; query = ''; $('q').value = '#' + tag; $('right').style.display = 'none'; sel = null; goal.t = [0,0,0]; goal.dist = HOME; refresh(); } };
+
+function timeUI() {
+  const c = { context: 0, code: 0 }; N.forEach(n => { if (n.file && n.m <= months[tIdx]) c[n.side]++; });
+  [...$('bars').children].forEach((b,i) => b.classList.toggle('in', i <= tIdx));
+  const [y,m] = months[tIdx].split('-'); $('when').firstElementChild.textContent = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][m-1] + ' ' + y;
+  $('when').lastElementChild.textContent = [side !== 'code' && c.context.toLocaleString() + ' docs', hasCode && side !== 'context' && c.code.toLocaleString() + ' code files'].filter(Boolean).join(' · ');
+}
+{ const mx = Math.max(...perMonth, 1); $('bars').innerHTML = perMonth.map((c,i) => `<i title="${months[i]}: ${c} added" style="height:${Math.max(2, c/mx*100)}%"></i>`).join(''); }
+const setT = e => { const r = $('bars').getBoundingClientRect(); tIdx = Math.max(0, Math.min(months.length-1, Math.floor((e.clientX - r.left) / r.width * months.length))); timeUI(); refresh(); };
+$('bars').onmousedown = e => { stop(); setT(e); const mv = ev => setT(ev); addEventListener('mousemove', mv); addEventListener('mouseup', () => removeEventListener('mousemove', mv), { once: true }); };
+function stop() { clearInterval(playing); playing = null; $('play').textContent = '▶'; }
+$('play').onclick = () => { if (playing) return stop(); if (tIdx >= months.length - 1) tIdx = 0; $('play').textContent = '❚❚';
+  playing = setInterval(() => { if (tIdx >= months.length - 1) return stop(); tIdx++; timeUI(); refresh(); }, Math.max(120, 9000 / months.length)); timeUI(); refresh(); };
+
+const gv = G.stats.governance, wl = G.stats.worklist;
+// ---- the numbers, what each means, and what to do about it ----
+const srcN = gv.sourceFiles, share = p => fmt(Math.round(srcN * p / 100)), how = gv.declaredLinks ? `${fmt(gv.declaredLinks)} governs links are declared, the rest are inferred from what documents name.` : 'Nothing is declared yet, so this is inferred from what documents name.';
+const INFO = {
+  documents: `<b>Documents.</b> Every file in the contextbase. On the Compass: ${COMPASS.map(([k, l]) => fmt(gv.compass[k] || 0) + ' ' + l.split(' ')[0]).join(', ')}. Volume says how much is remembered, not how much is governed.`,
+  'code files': `<b>Code files.</b> Every tracked file outside the contextbase. ${fmt(srcN)} of them are source files, and coverage and dark code are measured on those.`,
+  coverage: `<b>Coverage.</b> The share of source files that a South or West document governs by name: about ${share(gv.coverage)} of ${fmt(srcN)}. Counting files whose folder is named, it is ${gv.coverageWithFolder}%. ${how} <b>To raise it:</b> add <code>governs:</code> to the documents that already describe code, then write a rule for the darkest folders.`,
+  'dark code': `<b>Dark code.</b> Source files that no South or West document points at, by name or by folder: about ${share(gv.darkCode)} of ${fmt(srcN)}. It is not bad code. It is code an agent will change with no rule in hand. <b>To shrink it:</b> write one pattern, decision or runbook for each dark folder and give it a <code>governs:</code> line.`,
+  connections: `<b>Connections.</b> Every link between two files: markdown links, mentions of a path, frontmatter references.`,
+};
+let infoOn = null;
+function statsUI() {
+  const cells = [[fmt(G.stats.docs),'documents'], hasCode && [fmt(G.stats.code),'code files'], hasCode && [gv.coverage + '%','coverage'], hasCode && [gv.darkCode + '%','dark code'], !hasCode && [fmt(G.stats.links),'connections']].filter(Boolean);
+  $('stats').innerHTML = cells.map(([v,l]) => `<div class="stat"><b>${v}</b><small>${l}<button class="i${infoOn === l ? ' on' : ''}" data-i="${l}" aria-label="What ${l} means" aria-expanded="${infoOn === l}">i</button></small></div>`).join('')
+    + (infoOn ? `<p class="explain">${INFO[infoOn]}</p>` : '')
+    + `<p>${hasCode ? gv.coverageWithFolder + '% governed counting folders · ' : ''}${gv.deadContext}% of East never recalled</p><p>${fmt(G.stats.links)} connections · ${fmt(G.stats.words)} words${hasCode ? ' · ' + fmt(G.stats.lines) + ' lines' : ''}</p>`
+    + (wl ? `<button class="go" id="go">Close the gap: what to do next</button>` : '');
+}
+$('stats').onclick = e => { const b = e.target.closest('.i'); if (b) { infoOn = infoOn === b.dataset.i ? null : b.dataset.i; return statsUI(); } if (e.target.closest('#go')) gap(); };
+// the worklist: the same list the run writes to <repo>-brain-worklist.md, with every row a jump into the graph
+function gap() {
+  sel = null; refresh(); spin(false); goal.t = [0,0,0]; goal.dist = HOME; const p = $('right');
+  const rows = (list, f) => list.slice(0, 12).map(x => { const [i, label, n] = f(x); return `<div class="nb w"${i != null ? ` data-i="${i}"` : ' style="cursor:default"'}><i style="background:${i != null ? colors.get(key(N[i])) || C.muted : C.muted}"></i><span>${esc(label)}</span><em>${esc(n)}</em></div>`; }).join('');
+  p.innerHTML = `<button class="x" aria-label="Close">×</button><h2>Close the gap</h2>
+    <div class="sub">Coverage ${gv.coverage}% · dark code ${gv.darkCode}%. Work the steps in order, then run the brain again.</div>
+    <div class="step">1. Declare what you already have</div><p class="note">These documents already name code. Add a <code>governs:</code> block to each, keeping only the paths it really binds. The worklist file has the block ready to paste.</p>${rows(wl.declare, d => [d.id, N[d.id].title, d.governs.length + d.more + ' paths'])}
+    <div class="step">2. Light the darkest folders</div><p class="note">Write one pattern, decision or runbook per folder, drawn from the records of past work that already mention it.</p>${rows(wl.darkFolders, f => [f.id, f.path + '/', fmt(f.dark) + ' dark'])}
+    <div class="step">3. Experience with no knowledge</div><p class="note">Dark files your session briefs keep coming back to. The lesson exists and is not yet a rule.</p>${rows(wl.promote, f => [f.id, N[f.id].title, f.eastRecords + ' records'])}
+    ${wl.broad.length ? `<div class="step">4. Too broad to count</div><p class="note">These name more than ${wl.broadAt} places each. They are indexes, not rules. Do not declare them.</p>${rows(wl.broad, b => [b.id, N[b.id].title, fmt(b.targets) + ' places'])}` : ''}
+    <div class="step">${wl.broad.length ? 5 : 4}. Dead East</div><p class="note">${fmt(wl.deadEast.total)} records of past work that nothing refers to. Draw on them for steps 2 and 3 before archiving.</p>
+    <p class="note" style="margin-top:12px">The <b>c2-govern</b> skill in the C² kit walks an agent through this list with you.</p>`;
+  p.style.display = 'block'; p.scrollTop = 0;
+}
+$('name').textContent = G.name + ' brain'; document.title = G.name + ' brain';
+$('gen').textContent = (G.public ? 'Public view: shape only, no file names · ' : '') + 'Generated ' + G.generated + (G.head ? ' at ' + G.head : '');
+statsUI();
+legend(); resize(); timeUI(); refresh(); onresize = resize; draw();
+</script>
+</body>
+</html>
