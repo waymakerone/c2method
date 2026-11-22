@@ -65,7 +65,7 @@ four numbers, and the Compass colour mode shows them on the graph:
 
 | Number | Meaning |
 |---|---|
-| Coverage | share of source files governed by name (and the share counting folders) |
+| Coverage | share of source files a document names or declares (and the share counting folders a document only mentions) |
 | Dark code | share nothing governs |
 | Dead context | share of East that nothing refers to |
 | Compounding rate | new South and West against new East in 90 days (provisional) |

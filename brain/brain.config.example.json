@@ -2,7 +2,7 @@
   "name": "my-project",
   "context": ["docs"],
   "router": ["CLAUDE.md", "AGENTS.md"],
-  "apps": ["apps/*", "packages/*"],
+  "apps": ["apps/*", "native/desktop"],
   "kinds": [
     ["standard", "/standards/"]
   ],

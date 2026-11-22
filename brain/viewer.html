@@ -387,7 +387,7 @@ const srcN = gv.sourceFiles, share = p => fmt(Math.round(srcN * p / 100)), how =
 const INFO = {
   documents: `<b>Documents.</b> Every file in the contextbase. On the Compass: ${COMPASS.map(([k, l]) => fmt(gv.compass[k] || 0) + ' ' + l.split(' ')[0]).join(', ')}. Volume says how much is remembered, not how much is governed.`,
   'code files': `<b>Code files.</b> Every tracked file outside the contextbase. ${fmt(srcN)} of them are source files, and coverage and dark code are measured on those.`,
-  coverage: `<b>Coverage.</b> The share of source files that a South or West document governs by name: about ${share(gv.coverage)} of ${fmt(srcN)}. Counting files whose folder is named, it is ${gv.coverageWithFolder}%. ${how} <b>To raise it:</b> add <code>governs:</code> to the documents that already describe code, then write a rule for the darkest folders.`,
+  coverage: `<b>Coverage.</b> The share of source files that a South or West document governs, by naming the file or by declaring its folder: about ${share(gv.coverage)} of ${fmt(srcN)}. Counting files whose folder is only mentioned, it is ${gv.coverageWithFolder}%. ${how} <b>To raise it:</b> add <code>governs:</code> to the documents that already describe code, then write a rule for the darkest folders.`,
   'dark code': `<b>Dark code.</b> Source files that no South or West document points at, by name or by folder: about ${share(gv.darkCode)} of ${fmt(srcN)}. It is not bad code. It is code an agent will change with no rule in hand. <b>To shrink it:</b> write one pattern, decision or runbook for each dark folder and give it a <code>governs:</code> line.`,
   connections: `<b>Connections.</b> Every link between two files: markdown links, mentions of a path, frontmatter references.`,
 };

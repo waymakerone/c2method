@@ -281,14 +281,17 @@ for (const [id, globs] of declaredGlobs) for (let g of globs) {
 }
 const parentOf = new Map()
 for (const [k, kind] of edges) if (kind === 'tree') { const [a, b] = k.split('>').map(Number); parentOf.set(b, a) }
-const gFile = new Set(), gFolder = new Set(), gDeep = new Set()
+// A file is governed outright ("direct") when a document names it, or declares its folder or a
+// folder above it. A folder that a document only mentions gives the weaker "folder" reading: the
+// document may bind those files, or may have named the folder in passing.
+const gFile = new Set(), gFolder = new Set(), gDeclared = new Set(), gDeep = new Set()
 for (const [k, kind] of edges) if (kind === 'governs') {
-  const t = +k.split('>')[1]
-  if (nodes[t].type === 'file') gFile.add(t); else (flags.get(k)?.deep ? gDeep : gFolder).add(t)
+  const t = +k.split('>')[1], f = flags.get(k)
+  if (nodes[t].type === 'file') gFile.add(t); else (f?.deep ? gDeep : f?.declared ? gDeclared : gFolder).add(t)
 }
 for (let i = 0; i < nFiles; i++) { const n = nodes[i]; if (n.side !== 'code') continue
-  let gov = gFile.has(i) ? 'direct' : gFolder.has(parentOf.get(i)) ? 'folder' : 'dark'
-  for (let p = parentOf.get(i); gov === 'dark' && p != null; p = parentOf.get(p)) if (gDeep.has(p)) gov = 'folder'
+  let gov = gFile.has(i) || gDeclared.has(parentOf.get(i)) ? 'direct' : gFolder.has(parentOf.get(i)) ? 'folder' : 'dark'
+  for (let p = parentOf.get(i); gov !== 'direct' && p != null; p = parentOf.get(p)) if (gDeep.has(p)) gov = 'direct'
   n.gov = gov
 }
 
@@ -311,7 +314,7 @@ const since = new Date(Date.now() - 90 * 864e5).toISOString().slice(0, 10)
 const pct = (a, b) => (b ? Math.round((1000 * a) / b) / 10 : 0)
 const governance = {
   sourceFiles: src.length,
-  coverage: pct(src.filter(n => n.gov === 'direct').length, src.length),          // % governed by name
+  coverage: pct(src.filter(n => n.gov === 'direct').length, src.length),          // % governed by name or by declaration
   coverageWithFolder: pct(src.filter(n => n.gov !== 'dark').length, src.length),   // % governed by name or by folder
   darkCode: pct(src.filter(n => n.gov === 'dark').length, src.length),
   deadContext: pct(east.filter(n => !referenced.has(n.id)).length, east.length),   // % of East nothing refers to

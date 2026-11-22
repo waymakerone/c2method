@@ -5,6 +5,16 @@ this file says where C² is *now*, built on its history rather than restarting f
 
 ---
 
+## v1.5.1 — a declared folder counts as covered (2026-11-22)
+
+**Coverage now counts what a document declares.** A document that declares a folder under
+`governs:` (`src/auth/` or `src/auth/**`) governs the files in it outright, the same as naming
+them. Before, only a file named one by one counted, so a repository that had declared everything
+still read as a few percent. A folder that a document only mentions in passing still gives the
+weaker "counting folders" figure. A repository with no declarations reads exactly as before.
+
+The example config no longer lists `packages/*` as apps: packages are shared code.
+
 ## v1.5.0 — the brain, and context governance (2026-11-22)
 
 **The claim:** the power of a contextbase is not how much it holds. It is how much of the work
